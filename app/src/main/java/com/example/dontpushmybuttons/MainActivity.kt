@@ -44,7 +44,7 @@ fun Title(lable: String) {
 
 @Composable
 fun FixedGrid() {
-    val items = List(32) { "${it + 1}" } // 12 buttons
+    val items = List(32) { "${it + 1}" }
 
     Box(
         modifier = Modifier.padding( top = 56.dp)
@@ -72,7 +72,7 @@ fun ButtonGridItem(label: String) {
         onClick = { /* Handle click */ },
         modifier = Modifier
             .fillMaxWidth()
-            .aspectRatio(1f) // Square buttons
+            .aspectRatio(1f)
     ) {
         Text(text = label)
     }

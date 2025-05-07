@@ -15,6 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.dontpushmybuttons.ui.theme.DontPushMyButtonsTheme
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.foundation.shape.RoundedCornerShape
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,7 +27,7 @@ class MainActivity : ComponentActivity() {
             DontPushMyButtonsTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     Column(modifier = Modifier.padding(16.dp)) {
-                        Text(text = "Hello World!", style = MaterialTheme.typography.headlineMedium)
+//                        Text(text = "Hello World!", style = MaterialTheme.typography.headlineMedium)
                         Spacer(modifier = Modifier.height(16.dp))
                         FixedGrid()
                     }
@@ -33,10 +36,35 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
+class ButtonItem(
+    val label: Int,
+    val color: Color,
+    val shape: Shape
+)
+
+val button1 = ButtonItem(
+    label = 1,
+    color = Color.Blue,
+    shape = RoundedCornerShape(0.dp)
+)
+
+val button2 = ButtonItem(
+    label = 2,
+    color = Color.Red,
+    shape = RoundedCornerShape(16.dp)
+)
+
+val button3 = ButtonItem(
+    label = 3,
+    color = Color.Green,
+    shape = RoundedCornerShape(100.dp)
+)
+
 @Composable
-fun Title(lable: String) {
+fun Title(label: String) {
     Text(
-        text = lable,
+        text = label,
         style = MaterialTheme.typography.headlineMedium,
         modifier = Modifier.padding(16.dp)
     )
@@ -44,7 +72,11 @@ fun Title(lable: String) {
 
 @Composable
 fun FixedGrid() {
-    val items = List(32) { "${it + 1}" }
+    val items: List<ButtonItem> = listOf(
+        button1,
+        button2,
+        button3
+    )
 
     Box(
         modifier = Modifier.padding( top = 56.dp)
@@ -59,22 +91,23 @@ fun FixedGrid() {
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.fillMaxSize()
         ) {
-            items(items) { label ->
-                ButtonGridItem(label = label)
+            items(items) { item ->
+                ButtonGridItem(label = item.label, color = item.color, shape = item.shape)
             }
         }
     }
 }
 
 @Composable
-fun ButtonGridItem(label: String) {
+fun ButtonGridItem(label: Int, color: Color, shape: Shape) {
     Button(
         onClick = { /* Handle click */ },
+        colors = ButtonDefaults.buttonColors(containerColor = color),
+        shape = shape,
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(1f)
     ) {
-        Text(text = label)
     }
 }
 

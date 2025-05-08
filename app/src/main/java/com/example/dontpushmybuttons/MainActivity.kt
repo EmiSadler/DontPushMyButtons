@@ -458,7 +458,7 @@ fun FixedGrid() {
             }
 
             Box(
-                modifier = Modifier.padding(top = 56.dp)
+                modifier = Modifier.padding(top = 16.dp)
                     .fillMaxSize()
                     .padding(8.dp)
 

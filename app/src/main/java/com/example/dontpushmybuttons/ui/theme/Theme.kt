@@ -16,20 +16,20 @@ private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
     secondary = PurpleGrey80,
     tertiary = Pink80,
-    background = Color.Black,  // Pure black background
+    background = Color.Black,
     surface = Color(0xFF121212),
-    onBackground = Color.White,  // White text on background
-    onSurface = Color.White      // White text on surface
+    onBackground = Color.White,
+    onSurface = Color.White
 )
 
 private val LightColorScheme = lightColorScheme(
     primary = Purple40,
     secondary = PurpleGrey40,
     tertiary = Pink40,
-    background = Color.White,   // Pure white background
+    background = Color.White,
     surface = Color(0xFFF5F5F5),
-    onBackground = Color.Black,  // Black text on background
-    onSurface = Color.Black      // Black text on surface
+    onBackground = Color.Black,
+    onSurface = Color.Black
 )
 
 @Composable

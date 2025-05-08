@@ -1,24 +1,41 @@
 package com.example.dontpushmybuttons
 
 import android.graphics.Color.parseColor
-import android.icu.text.CaseMap.Title
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material3.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.dontpushmybuttons.ui.theme.DontPushMyButtonsTheme
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.example.dontpushmybuttons.ui.theme.DontPushMyButtonsTheme
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,7 +45,6 @@ class MainActivity : ComponentActivity() {
             DontPushMyButtonsTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     Column(modifier = Modifier.padding(16.dp)) {
-//                        Text(text = "Hello World!", style = MaterialTheme.typography.headlineMedium)
                         Spacer(modifier = Modifier.height(16.dp))
                         FixedGrid()
                     }
@@ -248,6 +264,7 @@ fun Title(label: String) {
 
 @Composable
 fun FixedGrid() {
+    var counter by remember { mutableStateOf(0) }
     val items: List<ButtonItem> = listOf(
         button1,
         button2,
@@ -283,36 +300,49 @@ fun FixedGrid() {
         button32
     )
 
-    Box(
-        modifier = Modifier.padding( top = 56.dp)
-            .fillMaxSize()
-            .padding(8.dp)
+    Column(modifier = Modifier.fillMaxSize()) {
+        Text(
+            text = "Count: $counter",
+            style = MaterialTheme.typography.headlineSmall,
+        )
 
-    ) {
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(4),
-            contentPadding = PaddingValues(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.fillMaxSize()
+        Box(
+            modifier = Modifier.padding(top = 56.dp)
+                .fillMaxSize()
+                .padding(8.dp)
+
         ) {
-            items(items) { item ->
-                ButtonGridItem(label = item.label, color = item.color, shape = item.shape)
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(4),
+                contentPadding = PaddingValues(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.fillMaxSize()
+            ) {
+                items(items) { item ->
+                    ButtonGridItem(label = item.label, color = item.color, shape = item.shape, onClickIncrement = { counter++ }
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-fun ButtonGridItem(label: Int, color: Color, shape: Shape) {
+fun ButtonGridItem(label: Int, color: Color, shape: Shape, onClickIncrement: () -> Unit) {
     Button(
-        onClick = { /* Handle click */ },
+        onClick = onClickIncrement,
         colors = ButtonDefaults.buttonColors(containerColor = color),
         shape = shape,
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(1f)
     ) {
+        Text(
+            text = label.toString(),
+            style = MaterialTheme.typography.headlineSmall,
+            color = Color.Black
+        )
     }
 }
 

@@ -1,9 +1,6 @@
 package com.example.dontpushmybuttons
 
 
-import android.graphics.Path
-import android.icu.text.CaseMap.Title
-import android.graphics.Color.parseColor
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -22,7 +19,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.GenericShape
-import androidx.compose.material3.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -37,17 +33,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.asComposePath
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.withTransform
-import androidx.core.graphics.rotationMatrix
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.core.graphics.toColorInt
 import androidx.graphics.shapes.CornerRounding
 import androidx.graphics.shapes.RoundedPolygon
 import androidx.graphics.shapes.toPath
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.example.dontpushmybuttons.ui.theme.DontPushMyButtonsTheme
 
 
@@ -70,7 +62,7 @@ class MainActivity : ComponentActivity() {
 
 
 val String.color
-    get() = Color(parseColor(this))
+    get() = Color(this.toColorInt())
 
 val colourRed = "#F45B69".color
 val colourGreen = "#92EF80".color
@@ -90,7 +82,7 @@ val button1 = ButtonItem(
     label = 1,
     shape = GenericShape { size, _ ->
         addPath(createSmoothTrianglePath(size.maxDimension))
-    }
+    },
     color = colourYellow,
     hint = listOf("Don't", "Push", "My", "Buttons")
 
@@ -100,7 +92,7 @@ val button2 = ButtonItem(
     label = 2,
     shape = GenericShape { size, _ ->
         addPath(createSmoothHexagonPath(size.minDimension))
-    }
+    },
     color = colourGreen,
     hint = listOf("Don't", "Push", "My", "Buttons")
 )

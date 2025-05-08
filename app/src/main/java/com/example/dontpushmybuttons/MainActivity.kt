@@ -1,5 +1,6 @@
 package com.example.dontpushmybuttons
 
+import android.graphics.Color.parseColor
 import android.icu.text.CaseMap.Title
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -45,20 +46,26 @@ class ButtonItem(
 
 val button1 = ButtonItem(
     label = 1,
-    color = Color.Blue,
+    color = "#FFBE0B".color,
     shape = RoundedCornerShape(0.dp)
 )
 
 val button2 = ButtonItem(
     label = 2,
-    color = Color.Red,
+    color = "#92EF80".color,
     shape = RoundedCornerShape(16.dp)
 )
 
 val button3 = ButtonItem(
     label = 3,
-    color = Color.Green,
+    color = "#F45B69".color,
     shape = RoundedCornerShape(100.dp)
+)
+
+val button4 = ButtonItem(
+    label = 4,
+    color = "#028090".color,
+    shape = RoundedCornerShape(0.dp)
 )
 
 @Composable
@@ -75,7 +82,8 @@ fun FixedGrid() {
     val items: List<ButtonItem> = listOf(
         button1,
         button2,
-        button3
+        button3,
+        button4
     )
 
     Box(
@@ -119,3 +127,6 @@ fun PreviewFixedGrid() {
         FixedGrid()
     }
 }
+
+val String.color
+    get() = Color(parseColor(this))

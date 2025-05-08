@@ -1,6 +1,4 @@
 package com.example.dontpushmybuttons
-
-
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -31,6 +29,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.runtime.Composable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -59,6 +58,10 @@ override fun onCreate(savedInstanceState: Bundle?) {
         var isDarkTheme by rememberSaveable {
             mutableStateOf(systemDarkTheme)
          }
+        var counter by remember { mutableStateOf(0) }
+        var isGameRunning by remember { mutableStateOf(false) }
+        var gameOver by remember { mutableStateOf(false) }
+        var currentHint by remember { mutableStateOf<String?>(null) }
 
         DontPushMyButtonsTheme(darkTheme = isDarkTheme) {
             Surface(
@@ -68,23 +71,39 @@ override fun onCreate(savedInstanceState: Bundle?) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Row(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                            .offset(x = 45.dp)
+                            .padding(horizontal = 16.dp, vertical = 2.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        AppLogo(
-                            modifier = Modifier.weight(1F)
-                        )
-                        Switch(
-                            checked = isDarkTheme,
-                            onCheckedChange = { isDarkTheme = it },
-                            modifier = Modifier.weight(2f)
-                        )
+                        if (isGameRunning && !gameOver) {
+                            Text(
+                                text = "Count: $counter",
+                                style = MaterialTheme.typography.headlineSmall,
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Switch(
+                                checked = isDarkTheme,
+                                onCheckedChange = { isDarkTheme = it }
+                            )
+                        }
                     }
 
-                    Spacer(modifier = Modifier.height(16.dp))
-                    FixedGrid()
+                    FixedGrid(
+                        counter = counter,
+                        onCounterChange = { counter = it },
+                        isGameRunning = isGameRunning,
+                        onGameRunningChange = { isGameRunning = it },
+                        gameOver = gameOver,
+                        onGameOverChange = { gameOver = it },
+                        currentHint = currentHint,
+                        onHintChange = { currentHint = it }
+                    )
                 }
             }
         }
@@ -370,14 +389,20 @@ fun Title(label: String) {
 }
 
 @Composable
-fun FixedGrid() {
-    var counter by remember { mutableStateOf(0) }
-    var isGameRunning by remember { mutableStateOf(false) }
+fun FixedGrid(
+    counter: Int,
+    onCounterChange: (Int) -> Unit,
+    isGameRunning: Boolean,
+    onGameRunningChange: (Boolean) -> Unit,
+    gameOver: Boolean,
+    onGameOverChange: (Boolean) -> Unit,
+    currentHint: String?,
+    onHintChange: (String?) -> Unit
+) {
     var targetButtonId by remember { mutableStateOf(0) }
-    var gameOver by remember { mutableStateOf(false) }
     var finalScore by remember { mutableStateOf(0) }
-    var currentHint by remember { mutableStateOf<String?>(null) }
     var incorrectClicks by remember { mutableStateOf(0) }
+
     val items: List<ButtonItem> = listOf(
         button1,
         button2,
@@ -419,21 +444,20 @@ fun FixedGrid() {
             val targetButton = items.find { it.label == targetButtonId }
             targetButton?.let {
                 if (hintIndex < it.hint.size) {
-                    currentHint = it.hint[hintIndex]
+                    onHintChange(it.hint[hintIndex])
                 }
             }
         }
     }
 
     fun startNewGame() {
-        isGameRunning = true
-        gameOver = false
-        counter = 0
+        onGameRunningChange(true)
+        onGameOverChange(false)
+        onCounterChange(0)
         incorrectClicks = 0
-        currentHint = null
+        onHintChange(null)
         targetButtonId = (1..32).random()
     }
-
     Column(modifier = Modifier.fillMaxSize()) {
         if (!isGameRunning && !gameOver) {
             Button(
@@ -473,19 +497,29 @@ fun FixedGrid() {
                 }
             }
         } else {
+Box(
+                modifier = Modifier
+                    .fillMaxWidth(),
+            ) {
+                AppLogo(
+                    modifier = Modifier
+                        .height(100.dp)
+                        .align(Alignment.CenterStart)
 
-            Text(
-                text = "Count: $counter",
-                style = MaterialTheme.typography.headlineSmall,
-            )
-
-            currentHint?.let { hint ->
-                Text(
-                    text = "Hint: $hint",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface,
                 )
-            }
+    currentHint?.let { hint ->
+        Text(
+            text = "Hint: $hint",
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier
+                .padding(start = 110.dp)
+                .fillMaxWidth()
+        )
+    }
+
+}
+
 
             Box(
                 modifier = Modifier.padding(top = 16.dp)
@@ -496,7 +530,7 @@ fun FixedGrid() {
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(4),
                     contentPadding = PaddingValues(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.fillMaxSize()
                 ) {
@@ -506,10 +540,10 @@ fun FixedGrid() {
                             color = item.color,
                             shape = item.shape,
                             onClickIncrement = {
-                                counter++
+                                onCounterChange(counter + 1)
                                 if (item.label == targetButtonId) {
-                                    finalScore = counter
-                                    gameOver = true
+                                    finalScore = counter + 1
+                                    onGameOverChange(true)
                                 } else {
                                     incorrectClicks++
                                     updateHint()
@@ -518,6 +552,7 @@ fun FixedGrid() {
                         )
                     }
                 }
+                Spacer(modifier = Modifier.height(32.dp))
             }
         }
     }
@@ -547,17 +582,8 @@ fun AppLogo(modifier: Modifier = Modifier) {
         contentDescription = "App Logo",
         modifier = modifier
             .height(100.dp)
-            .padding(vertical = 8.dp)
+            .padding(vertical = 0.dp),
     )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewFixedGrid() {
-    DontPushMyButtonsTheme {
-        Title("Don't Push My Buttons")
-        FixedGrid()
-    }
 }
 
 

@@ -17,7 +17,7 @@ This repo contains:
 
 ### Video demo
 
-PUT A SCREEN RECORDING OF A RUN THROUGH OF THE SITE HERE
+Video demo will be added soon. Stay tuned!
 
 ### Features
 

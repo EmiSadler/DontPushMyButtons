@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,11 +27,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.material3.Switch
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.asComposePath
@@ -44,21 +49,45 @@ import com.example.dontpushmybuttons.ui.theme.DontPushMyButtonsTheme
 
 
 class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            DontPushMyButtonsTheme {
-                Surface(modifier = Modifier.fillMaxSize()) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Spacer(modifier = Modifier.height(16.dp))
-                        FixedGrid()
+override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    enableEdgeToEdge()
+    setContent {
+        val systemDarkTheme = isSystemInDarkTheme()
+        var isDarkTheme by rememberSaveable {
+            mutableStateOf(systemDarkTheme)
+         }
+
+        DontPushMyButtonsTheme(darkTheme = isDarkTheme) {
+            Surface(
+                modifier = Modifier.fillMaxSize(),
+                color = MaterialTheme.colorScheme.background
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = if (isDarkTheme) "Dark Mode" else "Light Mode",
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                        Switch(
+                            checked = isDarkTheme,
+                            onCheckedChange = { isDarkTheme = it }
+                        )
                     }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+                    FixedGrid()
                 }
             }
         }
     }
-}
+}}
 
 
 val String.color
@@ -379,6 +408,9 @@ fun FixedGrid() {
         if (!isGameRunning && !gameOver) {
             Button(
                 onClick = { startNewGame() },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
@@ -421,7 +453,7 @@ fun FixedGrid() {
                 Text(
                     text = "Hint: $hint",
                     style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.padding(top = 8.dp, bottom = 16.dp)
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
             }
 
@@ -473,7 +505,7 @@ fun ButtonGridItem(label: Int, color: Color, shape: Shape, onClickIncrement: () 
         Text(
             text = label.toString(),
             style = MaterialTheme.typography.headlineSmall,
-            color = Color.Black
+            color = MaterialTheme.colorScheme.onPrimary
         )
     }
 }

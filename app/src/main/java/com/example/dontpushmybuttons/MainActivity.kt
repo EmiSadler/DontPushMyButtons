@@ -273,7 +273,7 @@ val button19 = ButtonItem(
     label = 19,
     color = colourRed,
     shape = RoundedCornerShape(0.dp),
-    hint = listOf("Don't", "Push", "My", "Buttons")
+    hint = listOf("Deal or no deal?", "Push", "My", "Buttons")
 )
 
 val button20 = ButtonItem(
@@ -286,14 +286,14 @@ val button21 = ButtonItem(
     label = 21,
     color = colourRed,
     shape = RoundedCornerShape(100.dp),
-    hint = listOf("Don't", "Push", "My", "Buttons")
+    hint = listOf("Legally, I can do all sorts of things.", "I live on Jump Street.", "I live next to a bee-fanatic!", "You'll have your moment soon!")
 )
 
 val button22 = ButtonItem(
     label = 22,
     color = colourDarkGreen,
     shape = RoundedCornerShape(16.dp),
-    hint = listOf("Don't", "Push", "My", "Buttons")
+    hint = listOf("My name is Desmond.", "The number of the Avenue.", "In the word's of Taylor, I am feeling...", "Ok, I've given you some pretty significant hints already, go listen to some music!")
 )
 
 val button23 = ButtonItem(
@@ -302,7 +302,7 @@ val button23 = ButtonItem(
     shape = GenericShape {size,_ ->
         addPath(createSmoothHexagonPath(size.minDimension))
     },
-    hint = listOf("Don't", "Push", "My", "Buttons")
+    hint = listOf("I'm actually allergic to bees I'll have you know!", "I am a prime number.", "My carpet is red.", "Did you know, one of my creators has her birthday on this day!")
 )
 
 val button24 = ButtonItem(
@@ -311,7 +311,7 @@ val button24 = ButtonItem(
     shape = GenericShape {size, _ ->
         addPath(createSmoothPentagonPath(size.minDimension))
     },
-    hint = listOf("Don't", "Push", "My", "Buttons")
+    hint = listOf("I have so many factors!", "Jack Bauer is my dad's name.", "I am beside a yellow button.", "You'll have your moment, it just isn't this one...")
 )
 val button25 = ButtonItem(
     label = 25,
@@ -319,7 +319,7 @@ val button25 = ButtonItem(
     shape = GenericShape {size,_ ->
         addPath(createSmoothHexagonPath(size.minDimension))
     },
-    hint = listOf("Don't", "Push", "My", "Buttons")
+    hint = listOf("Do you take your tea with honey or sugar?", "I have red carpets in my house.", "I am a button on this screen.", "Ho Ho Ho! Merry Christmas!")
 )
 
 val button26 = ButtonItem(
@@ -328,14 +328,14 @@ val button26 = ButtonItem(
     shape = GenericShape { size, _ ->
         addPath(createSmoothPentagonPath(size.minDimension))
     },
-    hint = listOf("Don't", "Push", "My", "Buttons")
+    hint = listOf("I'm feeling lucky!", "I am too old for Leonardo DiCaprio", "I am next to a green button.", "Looks like we've got a winner! Not you though, obviously.")
 )
 
 val button27 = ButtonItem(
     label = 27,
     color = colourRed,
     shape = RoundedCornerShape(100.dp),
-    hint = listOf("Don't", "Push", "My", "Buttons")
+    hint = listOf("Without my neighbour, I'd roll right off the screen!", "Stop! In the name of love!", "My favourite food is pizza.", "Wow, so close to finding me... maybe...")
 )
 
 val button28 = ButtonItem(
@@ -344,7 +344,7 @@ val button28 = ButtonItem(
     shape = GenericShape {size,_ ->
         addPath(createSmoothTrianglePath(size.minDimension))
     },
-    hint = listOf("Don't", "Push", "My", "Buttons")
+    hint = listOf("I'm feeling quite blue today...", "I am next to a circle.", "My number neighbour and I share a shape!", "I like buttons.")
 )
 val button29 = ButtonItem(
     label = 29,
@@ -352,7 +352,7 @@ val button29 = ButtonItem(
     shape = GenericShape {size,_ ->
         addPath(createSmoothTrianglePath(size.minDimension))
     },
-    hint = listOf("Don't", "Push", "My", "Buttons")
+    hint = listOf("I am basically famous!", "I am beside a yellow button.", "I am a Prime Number", "Oh come on! I am famous after all!")
 )
 
 val button30 = ButtonItem(
@@ -361,21 +361,21 @@ val button30 = ButtonItem(
     shape = GenericShape {size,_ ->
         addPath(createSmoothHexagonPath(size.minDimension))
     },
-    hint = listOf("Don't", "Push", "My", "Buttons")
+    hint = listOf("My favourite song is by Eiffel 65", "My neighbour is the YouTube play button!", "I am divisible by 5!", "Really? No luck yet?")
 )
 
 val button31 = ButtonItem(
     label = 31,
     color = colourTeal,
     shape = RoundedCornerShape(16.dp),
-    hint = listOf("Don't", "Push", "My", "Buttons")
+    hint = listOf("I have four soft corners.", "Third column is best column.", "In May, I am the final day!", "Did you know, one of my creators has her birthday on this day!")
 )
 
 val button32 = ButtonItem(
     label = 32,
     color = colourDarkGreen,
     shape = RoundedCornerShape(100.dp),
-    hint = listOf("Don't", "Push", "My", "Buttons")
+    hint = listOf("I don't have any sharp points.", "You could split me evenly in half, but please don't.", "I'm next to two teal buttons.", "I may be at the end of the list, but I am still important!")
 )
 
 

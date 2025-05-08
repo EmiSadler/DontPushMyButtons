@@ -26,6 +26,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
 import androidx.compose.runtime.Composable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -71,13 +73,13 @@ override fun onCreate(savedInstanceState: Bundle?) {
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = if (isDarkTheme) "Dark Mode" else "Light Mode",
-                            style = MaterialTheme.typography.bodyMedium,
+                        AppLogo(
+                            modifier = Modifier.weight(1F)
                         )
                         Switch(
                             checked = isDarkTheme,
-                            onCheckedChange = { isDarkTheme = it }
+                            onCheckedChange = { isDarkTheme = it },
+                            modifier = Modifier.weight(2f)
                         )
                     }
 
@@ -508,6 +510,17 @@ fun ButtonGridItem(label: Int, color: Color, shape: Shape, onClickIncrement: () 
             color = MaterialTheme.colorScheme.onPrimary
         )
     }
+}
+
+@Composable
+fun AppLogo(modifier: Modifier = Modifier) {
+    Image(
+        painter = painterResource(id = R.drawable.logo),
+        contentDescription = "App Logo",
+        modifier = modifier
+            .height(100.dp)
+            .padding(vertical = 8.dp)
+    )
 }
 
 @Preview(showBackground = true)

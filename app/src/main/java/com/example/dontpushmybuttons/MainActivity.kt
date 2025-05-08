@@ -100,20 +100,22 @@ val button2 = ButtonItem(
 val button3 = ButtonItem(
     label = 3,
     color = colourRed,
-    shape = RoundedCornerShape(100.dp),
+    shape = RoundedCornerShape(0.dp),
     hint = listOf("Don't", "Push", "My", "Buttons")
 )
 
 val button4 = ButtonItem(
     label = 4,
     color = colourDarkGreen,
-    shape = RoundedCornerShape(0.dp),
+    shape = GenericShape { size, _ ->
+        addPath(createSmoothPentagonPath(size.minDimension))
+    },
     hint = listOf("Don't", "Push", "My", "Buttons")
 )
 val button5 = ButtonItem(
     label = 5,
     color = colourBlue,
-    shape = RoundedCornerShape(0.dp),
+    shape = RoundedCornerShape(100.dp),
     hint = listOf("Don't", "Push", "My", "Buttons")
 )
 
@@ -134,27 +136,33 @@ val button7 = ButtonItem(
 val button8 = ButtonItem(
     label = 8,
     color = colourBlue,
-    shape = RoundedCornerShape(0.dp),
+    shape = GenericShape { size, _ ->
+        addPath(createSmoothHexagonPath(size.minDimension))
+    },
     hint = listOf("Don't", "Push", "My", "Buttons")
 )
 val button9 = ButtonItem(
     label = 9,
     color = colourRed,
-    shape = RoundedCornerShape(0.dp),
+    shape = GenericShape { size, _ ->
+        addPath(createSmoothPentagonPath(size.minDimension))
+    },
     hint = listOf("Don't", "Push", "My", "Buttons")
 )
 
 val button10 = ButtonItem(
     label = 10,
     color = colourDarkGreen,
-    shape = RoundedCornerShape(16.dp),
+    shape = RoundedCornerShape(0.dp),
     hint = listOf("Don't", "Push", "My", "Buttons")
 )
 
 val button11 = ButtonItem(
     label = 11,
     color = colourBlue,
-    shape = RoundedCornerShape(100.dp),
+    shape = GenericShape { size, _ ->
+        addPath(createSmoothTrianglePath(size.minDimension))
+    },
     hint = listOf("Don't", "Push", "My", "Buttons")
 )
 
@@ -167,7 +175,7 @@ val button12 = ButtonItem(
 val button13 = ButtonItem(
     label = 13,
     color = colourTeal,
-    shape = RoundedCornerShape(0.dp),
+    shape = RoundedCornerShape(100.dp),
     hint = listOf("Don't", "Push", "My", "Buttons")
 )
 
@@ -188,40 +196,46 @@ val button15 = ButtonItem(
 val button16 = ButtonItem(
     label = 16,
     color = colourRed,
-    shape = RoundedCornerShape(0.dp),
+    shape = GenericShape {size,_ ->
+        addPath(createSmoothHexagonPath(size.minDimension))
+    },
     hint = listOf("Don't", "Push", "My", "Buttons")
 )
 val button17 = ButtonItem(
     label = 17,
     color = colourGreen,
-    shape = RoundedCornerShape(0.dp),
+    shape = GenericShape {size,_ ->
+        addPath(createSmoothTrianglePath(size.minDimension))
+    },
     hint = listOf("Don't", "Push", "My", "Buttons")
 )
 
 val button18 = ButtonItem(
     label = 18,
     color = colourTeal,
-    shape = RoundedCornerShape(16.dp),
+    shape = GenericShape {size,_ ->
+        addPath(createSmoothHexagonPath(size.minDimension))
+    },
     hint = listOf("Don't", "Push", "My", "Buttons")
 )
 
 val button19 = ButtonItem(
     label = 19,
     color = colourRed,
-    shape = RoundedCornerShape(100.dp),
+    shape = RoundedCornerShape(0.dp),
     hint = listOf("Don't", "Push", "My", "Buttons")
 )
 
 val button20 = ButtonItem(
     label = 20,
     color = colourDarkGreen,
-    shape = RoundedCornerShape(0.dp),
+    shape = RoundedCornerShape(100.dp),
     hint = listOf("Don't", "Push", "My", "Buttons")
 )
 val button21 = ButtonItem(
     label = 21,
     color = colourRed,
-    shape = RoundedCornerShape(0.dp),
+    shape = RoundedCornerShape(100.dp),
     hint = listOf("Don't", "Push", "My", "Buttons")
 )
 
@@ -235,27 +249,35 @@ val button22 = ButtonItem(
 val button23 = ButtonItem(
     label = 23,
     color = colourYellow,
-    shape = RoundedCornerShape(100.dp),
+    shape = GenericShape {size,_ ->
+        addPath(createSmoothHexagonPath(size.minDimension))
+    },
     hint = listOf("Don't", "Push", "My", "Buttons")
 )
 
 val button24 = ButtonItem(
     label = 24,
     color = colourBlue,
-    shape = RoundedCornerShape(0.dp),
+    shape = GenericShape {size, _ ->
+        addPath(createSmoothPentagonPath(size.minDimension))
+    },
     hint = listOf("Don't", "Push", "My", "Buttons")
 )
 val button25 = ButtonItem(
     label = 25,
     color = colourYellow,
-    shape = RoundedCornerShape(0.dp),
+    shape = GenericShape {size,_ ->
+        addPath(createSmoothHexagonPath(size.minDimension))
+    },
     hint = listOf("Don't", "Push", "My", "Buttons")
 )
 
 val button26 = ButtonItem(
     label = 26,
     color = colourGreen,
-    shape = RoundedCornerShape(16.dp),
+    shape = GenericShape { size, _ ->
+        addPath(createSmoothPentagonPath(size.minDimension))
+    },
     hint = listOf("Don't", "Push", "My", "Buttons")
 )
 
@@ -269,34 +291,40 @@ val button27 = ButtonItem(
 val button28 = ButtonItem(
     label = 28,
     color = colourTeal,
-    shape = RoundedCornerShape(0.dp),
+    shape = GenericShape {size,_ ->
+        addPath(createSmoothTrianglePath(size.minDimension))
+    },
     hint = listOf("Don't", "Push", "My", "Buttons")
 )
 val button29 = ButtonItem(
     label = 29,
     color = colourRed,
-    shape = RoundedCornerShape(0.dp),
+    shape = GenericShape {size,_ ->
+        addPath(createSmoothTrianglePath(size.minDimension))
+    },
     hint = listOf("Don't", "Push", "My", "Buttons")
 )
 
 val button30 = ButtonItem(
     label = 30,
     color = colourBlue,
-    shape = RoundedCornerShape(16.dp),
+    shape = GenericShape {size,_ ->
+        addPath(createSmoothHexagonPath(size.minDimension))
+    },
     hint = listOf("Don't", "Push", "My", "Buttons")
 )
 
 val button31 = ButtonItem(
     label = 31,
     color = colourTeal,
-    shape = RoundedCornerShape(100.dp),
+    shape = RoundedCornerShape(16.dp),
     hint = listOf("Don't", "Push", "My", "Buttons")
 )
 
 val button32 = ButtonItem(
     label = 32,
     color = colourDarkGreen,
-    shape = RoundedCornerShape(0.dp),
+    shape = RoundedCornerShape(100.dp),
     hint = listOf("Don't", "Push", "My", "Buttons")
 )
 
@@ -509,5 +537,17 @@ fun createSmoothTrianglePath(size: Float): androidx.compose.ui.graphics.Path {
     )
 
     return roundedTriangle.toPath().asComposePath()
+}
+
+fun createSmoothPentagonPath(size: Float): androidx.compose.ui.graphics.Path {
+    val roundedPentagon = RoundedPolygon(
+        numVertices = 5,
+        radius = size / 1.7f,
+        centerX = size / 2,
+        centerY = size / 2,
+        rounding = CornerRounding(size / 10f, smoothing = 0.1f)
+    )
+
+    return roundedPentagon.toPath().asComposePath()
 }
 

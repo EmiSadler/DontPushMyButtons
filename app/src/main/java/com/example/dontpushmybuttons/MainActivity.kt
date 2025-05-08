@@ -54,6 +54,10 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+
+val String.color
+    get() = Color(parseColor(this))
+
 val colourRed = "#F45B69".color
 val colourGreen = "#92EF80".color
 val colourYellow = "#FFBE0B".color
@@ -64,192 +68,225 @@ val colourDarkGreen = "#137547".color
 class ButtonItem(
     val label: Int,
     val color: Color,
-    val shape: Shape
+    val shape: Shape,
+    val hint: List<String>
 )
 
 val button1 = ButtonItem(
     label = 1,
     color = colourYellow,
-    shape = RoundedCornerShape(0.dp)
+    shape = RoundedCornerShape(0.dp),
+    hint = listOf("Don't", "Push", "My", "Buttons")
 )
 
 val button2 = ButtonItem(
     label = 2,
     color = colourGreen,
-    shape = RoundedCornerShape(16.dp)
+    shape = RoundedCornerShape(16.dp),
+    hint = listOf("Don't", "Push", "My", "Buttons")
 )
 
 val button3 = ButtonItem(
     label = 3,
     color = colourRed,
-    shape = RoundedCornerShape(100.dp)
+    shape = RoundedCornerShape(100.dp),
+    hint = listOf("Don't", "Push", "My", "Buttons")
 )
 
 val button4 = ButtonItem(
     label = 4,
     color = colourDarkGreen,
-    shape = RoundedCornerShape(0.dp)
+    shape = RoundedCornerShape(0.dp),
+    hint = listOf("Don't", "Push", "My", "Buttons")
 )
 val button5 = ButtonItem(
     label = 5,
     color = colourBlue,
-    shape = RoundedCornerShape(0.dp)
+    shape = RoundedCornerShape(0.dp),
+    hint = listOf("Don't", "Push", "My", "Buttons")
 )
 
 val button6 = ButtonItem(
     label = 6,
     color = colourYellow,
-    shape = RoundedCornerShape(16.dp)
+    shape = RoundedCornerShape(16.dp),
+    hint = listOf("Don't", "Push", "My", "Buttons")
 )
 
 val button7 = ButtonItem(
     label = 7,
     color = colourTeal,
-    shape = RoundedCornerShape(100.dp)
+    shape = RoundedCornerShape(100.dp),
+    hint = listOf("Don't", "Push", "My", "Buttons")
 )
 
 val button8 = ButtonItem(
     label = 8,
     color = colourBlue,
-    shape = RoundedCornerShape(0.dp)
+    shape = RoundedCornerShape(0.dp),
+    hint = listOf("Don't", "Push", "My", "Buttons")
 )
 val button9 = ButtonItem(
     label = 9,
     color = colourRed,
-    shape = RoundedCornerShape(0.dp)
+    shape = RoundedCornerShape(0.dp),
+    hint = listOf("Don't", "Push", "My", "Buttons")
 )
 
 val button10 = ButtonItem(
     label = 10,
     color = colourDarkGreen,
-    shape = RoundedCornerShape(16.dp)
+    shape = RoundedCornerShape(16.dp),
+    hint = listOf("Don't", "Push", "My", "Buttons")
 )
 
 val button11 = ButtonItem(
     label = 11,
     color = colourBlue,
-    shape = RoundedCornerShape(100.dp)
+    shape = RoundedCornerShape(100.dp),
+    hint = listOf("Don't", "Push", "My", "Buttons")
 )
 
 val button12 = ButtonItem(
     label = 12,
     color = colourGreen,
-    shape = RoundedCornerShape(0.dp)
+    shape = RoundedCornerShape(0.dp),
+    hint = listOf("Don't", "Push", "My", "Buttons")
 )
 val button13 = ButtonItem(
     label = 13,
     color = colourTeal,
-    shape = RoundedCornerShape(0.dp)
+    shape = RoundedCornerShape(0.dp),
+    hint = listOf("Don't", "Push", "My", "Buttons")
 )
 
 val button14 = ButtonItem(
     label = 14,
     color = colourBlue,
-    shape = RoundedCornerShape(16.dp)
+    shape = RoundedCornerShape(16.dp),
+    hint = listOf("Don't", "Push", "My", "Buttons")
 )
 
 val button15 = ButtonItem(
     label = 15,
     color = colourYellow,
-    shape = RoundedCornerShape(100.dp)
+    shape = RoundedCornerShape(100.dp),
+    hint = listOf("Don't", "Push", "My", "Buttons")
 )
 
 val button16 = ButtonItem(
     label = 16,
     color = colourRed,
-    shape = RoundedCornerShape(0.dp)
+    shape = RoundedCornerShape(0.dp),
+    hint = listOf("Don't", "Push", "My", "Buttons")
 )
 val button17 = ButtonItem(
     label = 17,
     color = colourGreen,
-    shape = RoundedCornerShape(0.dp)
+    shape = RoundedCornerShape(0.dp),
+    hint = listOf("Don't", "Push", "My", "Buttons")
 )
 
 val button18 = ButtonItem(
     label = 18,
     color = colourTeal,
-    shape = RoundedCornerShape(16.dp)
+    shape = RoundedCornerShape(16.dp),
+    hint = listOf("Don't", "Push", "My", "Buttons")
 )
 
 val button19 = ButtonItem(
     label = 19,
     color = colourRed,
-    shape = RoundedCornerShape(100.dp)
+    shape = RoundedCornerShape(100.dp),
+    hint = listOf("Don't", "Push", "My", "Buttons")
 )
 
 val button20 = ButtonItem(
     label = 20,
     color = colourDarkGreen,
-    shape = RoundedCornerShape(0.dp)
+    shape = RoundedCornerShape(0.dp),
+    hint = listOf("Don't", "Push", "My", "Buttons")
 )
 val button21 = ButtonItem(
     label = 21,
     color = colourRed,
-    shape = RoundedCornerShape(0.dp)
+    shape = RoundedCornerShape(0.dp),
+    hint = listOf("Don't", "Push", "My", "Buttons")
 )
 
 val button22 = ButtonItem(
     label = 22,
     color = colourDarkGreen,
-    shape = RoundedCornerShape(16.dp)
+    shape = RoundedCornerShape(16.dp),
+    hint = listOf("Don't", "Push", "My", "Buttons")
 )
 
 val button23 = ButtonItem(
     label = 23,
     color = colourYellow,
-    shape = RoundedCornerShape(100.dp)
+    shape = RoundedCornerShape(100.dp),
+    hint = listOf("Don't", "Push", "My", "Buttons")
 )
 
 val button24 = ButtonItem(
     label = 24,
     color = colourBlue,
-    shape = RoundedCornerShape(0.dp)
+    shape = RoundedCornerShape(0.dp),
+    hint = listOf("Don't", "Push", "My", "Buttons")
 )
 val button25 = ButtonItem(
     label = 25,
     color = colourYellow,
-    shape = RoundedCornerShape(0.dp)
+    shape = RoundedCornerShape(0.dp),
+    hint = listOf("Don't", "Push", "My", "Buttons")
 )
 
 val button26 = ButtonItem(
     label = 26,
     color = colourGreen,
-    shape = RoundedCornerShape(16.dp)
+    shape = RoundedCornerShape(16.dp),
+    hint = listOf("Don't", "Push", "My", "Buttons")
 )
 
 val button27 = ButtonItem(
     label = 27,
     color = colourRed,
-    shape = RoundedCornerShape(100.dp)
+    shape = RoundedCornerShape(100.dp),
+    hint = listOf("Don't", "Push", "My", "Buttons")
 )
 
 val button28 = ButtonItem(
     label = 28,
     color = colourTeal,
-    shape = RoundedCornerShape(0.dp)
+    shape = RoundedCornerShape(0.dp),
+    hint = listOf("Don't", "Push", "My", "Buttons")
 )
 val button29 = ButtonItem(
     label = 29,
     color = colourRed,
-    shape = RoundedCornerShape(0.dp)
+    shape = RoundedCornerShape(0.dp),
+    hint = listOf("Don't", "Push", "My", "Buttons")
 )
 
 val button30 = ButtonItem(
     label = 30,
     color = colourBlue,
-    shape = RoundedCornerShape(16.dp)
+    shape = RoundedCornerShape(16.dp),
+    hint = listOf("Don't", "Push", "My", "Buttons")
 )
 
 val button31 = ButtonItem(
     label = 31,
     color = colourTeal,
-    shape = RoundedCornerShape(100.dp)
+    shape = RoundedCornerShape(100.dp),
+    hint = listOf("Don't", "Push", "My", "Buttons")
 )
 
 val button32 = ButtonItem(
     label = 32,
     color = colourDarkGreen,
-    shape = RoundedCornerShape(0.dp)
+    shape = RoundedCornerShape(0.dp),
+    hint = listOf("Don't", "Push", "My", "Buttons")
 )
 
 
@@ -265,6 +302,12 @@ fun Title(label: String) {
 @Composable
 fun FixedGrid() {
     var counter by remember { mutableStateOf(0) }
+    var isGameRunning by remember { mutableStateOf(false) }
+    var targetButtonId by remember { mutableStateOf(0) }
+    var gameOver by remember { mutableStateOf(false) }
+    var finalScore by remember { mutableStateOf(0) }
+    var currentHint by remember { mutableStateOf<String?>(null) }
+    var incorrectClicks by remember { mutableStateOf(0) }
     val items: List<ButtonItem> = listOf(
         button1,
         button2,
@@ -300,34 +343,112 @@ fun FixedGrid() {
         button32
     )
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        Text(
-            text = "Count: $counter",
-            style = MaterialTheme.typography.headlineSmall,
-        )
-
-        Box(
-            modifier = Modifier.padding(top = 56.dp)
-                .fillMaxSize()
-                .padding(8.dp)
-
-        ) {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(4),
-                contentPadding = PaddingValues(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.fillMaxSize()
-            ) {
-                items(items) { item ->
-                    ButtonGridItem(label = item.label, color = item.color, shape = item.shape, onClickIncrement = { counter++ }
-                    )
+    fun updateHint() {
+        if (incorrectClicks % 5 == 0 && incorrectClicks > 0) {
+            val hintIndex = (incorrectClicks / 5) - 1
+            val targetButton = items.find { it.label == targetButtonId }
+            targetButton?.let {
+                if (hintIndex < it.hint.size) {
+                    currentHint = it.hint[hintIndex]
                 }
             }
         }
     }
-}
 
+    fun startNewGame() {
+        isGameRunning = true
+        gameOver = false
+        counter = 0
+        incorrectClicks = 0
+        currentHint = null
+        targetButtonId = (1..32).random()
+    }
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        if (!isGameRunning && !gameOver) {
+            Button(
+                onClick = { startNewGame() },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+
+            ) {
+                Text("Start Game")
+            }
+        } else if (gameOver) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+
+                ) {
+                Text(
+                    text = "Game Over!",
+                    style = MaterialTheme.typography.headlineMedium
+                )
+                Text(
+                    text = "Final Score: $finalScore",
+                    style = MaterialTheme.typography.headlineSmall
+                )
+                Button(
+                    onClick = { startNewGame() },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Text("Play Again")
+                }
+            }
+        } else {
+
+            Text(
+                text = "Count: $counter",
+                style = MaterialTheme.typography.headlineSmall,
+            )
+
+            currentHint?.let { hint ->
+                Text(
+                    text = "Hint: $hint",
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.padding(top = 8.dp, bottom = 16.dp)
+                )
+            }
+
+            Box(
+                modifier = Modifier.padding(top = 56.dp)
+                    .fillMaxSize()
+                    .padding(8.dp)
+
+            ) {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(4),
+                    contentPadding = PaddingValues(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    items(items) { item ->
+                        ButtonGridItem(
+                            label = item.label,
+                            color = item.color,
+                            shape = item.shape,
+                            onClickIncrement = {
+                                counter++
+                                if (item.label == targetButtonId) {
+                                    finalScore = counter
+                                    gameOver = true
+                                } else {
+                                    incorrectClicks++
+                                    updateHint()
+                                }
+                            }
+                        )
+                    }
+                }
+            }
+        }
+    }
+    }
 @Composable
 fun ButtonGridItem(label: Int, color: Color, shape: Shape, onClickIncrement: () -> Unit) {
     Button(
@@ -354,6 +475,3 @@ fun PreviewFixedGrid() {
         FixedGrid()
     }
 }
-
-val String.color
-    get() = Color(parseColor(this))

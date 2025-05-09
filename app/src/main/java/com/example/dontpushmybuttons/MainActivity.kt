@@ -460,6 +460,14 @@ fun FixedGrid(
     }
     Column(modifier = Modifier.fillMaxSize()) {
         if (!isGameRunning && !gameOver) {
+            AppLogo(
+                modifier = Modifier
+                    .height(600.dp)
+                    .padding(vertical = 0.dp)
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .align(Alignment.CenterHorizontally)
+            )
             Button(
                 onClick = { startNewGame() },
                 colors = ButtonDefaults.buttonColors(

@@ -134,7 +134,7 @@ val button1 = ButtonItem(
         addPath(createSmoothTrianglePath(size.maxDimension))
     },
     color = colourYellow,
-    hint = listOf("Don't", "Push", "My", "Buttons")
+    hint = listOf("I'm the best button!", "I'm a playful button", "I'm the color of the inside of an egg (but which part of the egg?", "How have you not gotten it yet?")
 
 )
 
@@ -144,14 +144,14 @@ val button2 = ButtonItem(
         addPath(createSmoothHexagonPath(size.minDimension))
     },
     color = colourGreen,
-    hint = listOf("Don't", "Push", "My", "Buttons")
+    hint = listOf("I'm calming to look at", "six! six! six! The number of the beast!", "It's not easy being green", "Picture the inside of a cucumber, then choose the correct button and pretend you didn't need four hints")
 )
 
 val button3 = ButtonItem(
     label = 3,
     color = colourRed,
     shape = RoundedCornerShape(0.dp),
-    hint = listOf("Don't", "Push", "My", "Buttons")
+    hint = listOf("I'm not on the bottom row", "I'm thinking about something embarrassing", "I'll cut you", "I'm like the brick wall that stands between you and your future")
 )
 
 val button4 = ButtonItem(
@@ -160,27 +160,27 @@ val button4 = ButtonItem(
     shape = GenericShape { size, _ ->
         addPath(createSmoothPentagonPath(size.minDimension))
     },
-    hint = listOf("Don't", "Push", "My", "Buttons")
+    hint = listOf("I've got the makings of a star", "My bottom is not flat (no matter what the tabloids say)", "I am the color of snot. Discuss", "You've had enough hints for now")
 )
 val button5 = ButtonItem(
     label = 5,
     color = colourBlue,
     shape = RoundedCornerShape(100.dp),
-    hint = listOf("Don't", "Push", "My", "Buttons")
+    hint = listOf("They see me rolling", "I'm smooth", "My friends call me snowball", "I am a button")
 )
 
 val button6 = ButtonItem(
     label = 6,
     color = colourYellow,
     shape = RoundedCornerShape(16.dp),
-    hint = listOf("Don't", "Push", "My", "Buttons")
+    hint = listOf("I only have four friends", "I'm feeling boxed in to my career", "six! six! six! The number of the beast!", "I don't think you actually understand how to play this game")
 )
 
 val button7 = ButtonItem(
     label = 7,
     color = colourTeal,
     shape = RoundedCornerShape(100.dp),
-    hint = listOf("Don't", "Push", "My", "Buttons")
+    hint = listOf("I am a perfect button", "I am smooth like a koala's brain", "Imagine if the earth flooded", "Or, imagine what it would be like to actually have logical thinking skills")
 )
 
 val button8 = ButtonItem(
@@ -189,7 +189,7 @@ val button8 = ButtonItem(
     shape = GenericShape { size, _ ->
         addPath(createSmoothHexagonPath(size.minDimension))
     },
-    hint = listOf("Don't", "Push", "My", "Buttons")
+    hint = listOf("I wouldn't look out of place on the giant's causeway", "Push", "My", "Buttons")
 )
 val button9 = ButtonItem(
     label = 9,
@@ -197,14 +197,14 @@ val button9 = ButtonItem(
     shape = GenericShape { size, _ ->
         addPath(createSmoothPentagonPath(size.minDimension))
     },
-    hint = listOf("Don't", "Push", "My", "Buttons")
+    hint = listOf("If you get a rash this colour maybe buy some E45", "If you looked inside me you'd find a scary story", "You need security clearance to access me", "I will slap you if you don't get this right")
 )
 
 val button10 = ButtonItem(
     label = 10,
     color = colourDarkGreen,
     shape = RoundedCornerShape(0.dp),
-    hint = listOf("Don't", "Push", "My", "Buttons")
+    hint = listOf("It's not easy being green", "Statistically I am the safest age to be", "I have a powerful energy", "I disapprove of you just as your father disapproves of you")
 )
 
 val button11 = ButtonItem(
@@ -213,34 +213,34 @@ val button11 = ButtonItem(
     shape = GenericShape { size, _ ->
         addPath(createSmoothTrianglePath(size.minDimension))
     },
-    hint = listOf("Don't", "Push", "My", "Buttons")
+    hint = listOf("Descartes was very keen on me", "Three is my favourite number for more than one reason", "I have a similar vibe to an icicle", "In the US about 15 people are killed by icicles each year")
 )
 
 val button12 = ButtonItem(
     label = 12,
     color = colourGreen,
     shape = RoundedCornerShape(0.dp),
-    hint = listOf("Don't", "Push", "My", "Buttons")
+    hint = listOf("I am the color of snot. Discuss", "Mind me corners or you'll have your eye out", "My friend is pointing at me", "Seriously? How much help do you need? How do you ever achieve anything in your life?")
 )
 val button13 = ButtonItem(
     label = 13,
     color = colourTeal,
     shape = RoundedCornerShape(100.dp),
-    hint = listOf("Don't", "Push", "My", "Buttons")
+    hint = listOf("Click the blue button", "Not that blue button", "I'm button number 28", "Can't believe you fell for that!")
 )
 
 val button14 = ButtonItem(
     label = 14,
     color = colourBlue,
     shape = RoundedCornerShape(16.dp),
-    hint = listOf("Don't", "Push", "My", "Buttons")
+    hint = listOf("Ice, ice baby...", "I'm peaceful, I'm serene, I'm halfway down the screen", "The buttons to my left and right are twins", "You are bad at this")
 )
 
 val button15 = ButtonItem(
     label = 15,
     color = colourYellow,
     shape = RoundedCornerShape(100.dp),
-    hint = listOf("Don't", "Push", "My", "Buttons")
+    hint = listOf("I'm like an egg but in reverse", "stop, WAIT, go", "Have you ever tried egg flavoured crisps? They're good, I promise", "The best thing about egg flavoured crisps is no one else likes them so you get to eat the whole bag")
 )
 
 val button16 = ButtonItem(
@@ -249,7 +249,7 @@ val button16 = ButtonItem(
     shape = GenericShape {size,_ ->
         addPath(createSmoothHexagonPath(size.minDimension))
     },
-    hint = listOf("Don't", "Push", "My", "Buttons")
+    hint = listOf("STOP", "I am sweet", "I can't be bothered to write anymore hints", "Really that's it, you won't get another")
 )
 val button17 = ButtonItem(
     label = 17,

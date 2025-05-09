@@ -42,6 +42,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.asComposePath
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
 import androidx.graphics.shapes.CornerRounding
 import androidx.graphics.shapes.RoundedPolygon
@@ -500,16 +501,34 @@ fun FixedGrid(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(16.dp),
+                        .padding(0.dp),
 
                     ) {
-                    Text(
-                        text = "Game Over!",
-                        style = MaterialTheme.typography.headlineMedium
+                    AppLogo(
+                        modifier = Modifier
+                            .height(400.dp)
+                            .padding(vertical = 0.dp)
+                            .fillMaxWidth()
+                            .align(Alignment.CenterHorizontally)
                     )
                     Text(
+                        text = "Ok! Ok! You found me!",
+                        style = MaterialTheme.typography.headlineMedium,
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                    )
+                    Text(
+                        text = "Now stop pushing my buttons!",
+                        style = MaterialTheme.typography.headlineMedium,
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
                         text = "Final Score: $finalScore",
-                        style = MaterialTheme.typography.headlineSmall
+                        style = MaterialTheme.typography.headlineSmall,
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
                     )
                     Button(
                         onClick = { startNewGame() },
@@ -535,6 +554,7 @@ fun FixedGrid(
                         Text(
                             text = "Hint: $hint",
                             style = MaterialTheme.typography.bodyLarge,
+                            fontSize = 24.sp,
                             color = MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier
                                 .padding(start = 110.dp)

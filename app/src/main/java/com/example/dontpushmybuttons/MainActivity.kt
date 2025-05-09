@@ -257,7 +257,7 @@ val button17 = ButtonItem(
     shape = GenericShape {size,_ ->
         addPath(createSmoothTrianglePath(size.minDimension))
     },
-    hint = listOf("Don't", "Push", "My", "Buttons")
+    hint = listOf("I like making lists, mostly because it is satisfying to tick things off.", "My neighbour always complains that I am poking him.", "In someways, I am first.", "Somewhere on this screen is the button you are looking for, but I'm not that one.")
 )
 
 val button18 = ButtonItem(
@@ -266,21 +266,21 @@ val button18 = ButtonItem(
     shape = GenericShape {size,_ ->
         addPath(createSmoothHexagonPath(size.minDimension))
     },
-    hint = listOf("Don't", "Push", "My", "Buttons")
+    hint = listOf("I touch grass everyday. You should too!", "Hexagons are the bestagons", "They don't call me Big Rig for nothing!", "I am a button on this screen.")
 )
 
 val button19 = ButtonItem(
     label = 19,
     color = colourRed,
     shape = RoundedCornerShape(0.dp),
-    hint = listOf("Deal or no deal?", "Push", "My", "Buttons")
+    hint = listOf("Deal or no deal?", "I'm halfway to being a stop sign.", "Psst, the Sun rises in the North.", "Really? You need ANOTHER hint?")
 )
 
 val button20 = ButtonItem(
     label = 20,
     color = colourDarkGreen,
     shape = RoundedCornerShape(100.dp),
-    hint = listOf("Don't", "Push", "My", "Buttons")
+    hint = listOf("I'll have you know, I pay my taxes every year.", "You should really touch some grass.", "What is your point? Because I don't have one.", "It is unclear to me if you even want to win this game.")
 )
 val button21 = ButtonItem(
     label = 21,

@@ -21,6 +21,16 @@ Video demo will be added soon. Stay tuned!
 
 ### Features
 
+- Home screen that allows the user to choose dark/light mode
+- Home screen has a play button which initiates the game
+- Game screen with a grid of buttons (32 unique buttons)
+- Game screen has toggle to choose dark/light mode
+- Game screen has a counter to track users number of button presses
+- When a button is pressed, plays a sound
+- After 5 incorrect button presses, gives the user a hint (and again at 10, 15, and 20)
+- When the correct button is chosen, end screen pops up and victory sound is played
+- On end screen, user is presented with final score and a button to play again
+
 
 ### Out of Scope Features
 
@@ -44,7 +54,7 @@ http://miro.com/app/board/uXjVI4ns4CE=/
 
 1. Fork this repository
 2. Rename the fork
-3. Clone the fork to their local machine
+3. Clone the fork to local machine
 
 
 ## Authors and acknowledgment

@@ -1,8 +1,9 @@
-package com.example.dontpushmybuttons
+package com.example.dontpushmybuttons.sassybuttons
 import android.content.Context
 import android.media.AudioAttributes
 import android.media.SoundPool
 import android.util.Log
+import com.example.dontpushmybuttons.R
 
 class SoundManager(private val context: Context) {
     private val soundPool: SoundPool

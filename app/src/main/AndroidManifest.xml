@@ -38,6 +38,12 @@
             android:name="SassySwitches.SassySwitches"
             android:exported="false"
             android:theme="@style/Theme.DontPushMyButtons" />
+      
+        <!-- Final Button Game -->
+        <activity 
+            android:name="FinalButton.FinalButton"
+            android:exported="false"
+            android:theme="@style/Theme.DontPushMyButtoms" />
 
         <!-- Robo Remember Game -->
         <activity

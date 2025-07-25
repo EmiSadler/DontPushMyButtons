@@ -36,6 +36,8 @@
             android:exported="false"
             android:theme="@style/Theme.DontPushMyButtons" />
 
+        <activity android:name="FinalButton.FinalButton" />
+
     </application>
 
 </manifest>

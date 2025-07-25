@@ -165,6 +165,16 @@ fun HomeScreen(
                 onClick = { /* TODO: Implement future game */ },
                 enabled = false
             )
+
+            GameButton(
+                title = "Final Button",
+                description = "A screen full of buttons. Click to make them disappear!",
+                onClick = {
+                    val intent = Intent(context, FinalButton.FinalButton::class.java)
+                    context.startActivity(intent)
+                },
+                enabled = true
+            )
         }
 
         Spacer(modifier = Modifier.height(24.dp))

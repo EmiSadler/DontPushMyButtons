@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Permission for haptic feedback/vibration -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -35,8 +38,18 @@
             android:name="SassySwitches.SassySwitches"
             android:exported="false"
             android:theme="@style/Theme.DontPushMyButtons" />
+      
+        <!-- Final Button Game -->
+        <activity 
+            android:name="FinalButton.FinalButton"
+            android:exported="false"
+            android:theme="@style/Theme.DontPushMyButtoms" />
 
-        <activity android:name="FinalButton.FinalButton" />
+        <!-- Robo Remember Game -->
+        <activity
+            android:name="RoboRemember.RoboRemember"
+            android:exported="false"
+            android:theme="@style/Theme.DontPushMyButtons" />
 
     </application>
 

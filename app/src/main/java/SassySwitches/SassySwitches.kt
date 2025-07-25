@@ -43,7 +43,7 @@ import com.example.dontpushmybuttons.R
 import com.example.dontpushmybuttons.ui.theme.DontPushMyButtonsTheme
 
 
-class MainActivity : ComponentActivity() {
+class SassySwitches : ComponentActivity() {
     private lateinit var soundManager: SoundManager
 
     override fun onCreate(savedInstanceState: Bundle?) {

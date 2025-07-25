@@ -1,9 +1,11 @@
 package SassySwitches
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -36,9 +38,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.dontpushmybuttons.HomeActivity
 import com.example.dontpushmybuttons.R
 import com.example.dontpushmybuttons.ui.theme.DontPushMyButtonsTheme
 
@@ -343,11 +347,17 @@ fun FixedGrid(
 
     @Composable
     fun AppLogo(modifier: Modifier = Modifier) {
+        val context = LocalContext.current
+
         Image(
             painter = painterResource(id = R.drawable.logo),
             contentDescription = "App Logo",
             modifier = modifier
                 .height(100.dp)
-                .padding(vertical = 0.dp),
+                .padding(vertical = 0.dp)
+                .clickable {
+                    val intent = Intent(context, HomeActivity::class.java)
+                    context.startActivity(intent)
+                },
         )
     }

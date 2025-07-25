@@ -150,17 +150,19 @@ fun HomeScreen(
                 }
             )
 
-            // Button 3: Coming Soon
+            // Button 3: Robo Remember
             GameButton(
-                title = "Simon Says",
-                description = "Coming Soon...",
-                onClick = { /* TODO: Implement future game */ },
-                enabled = false
+                title = "Robo Remember",
+                description = "Memory sequence challenge",
+                onClick = {
+                    val intent = Intent(context, RoboRemember.RoboRemember::class.java)
+                    context.startActivity(intent)
+                }
             )
 
             // Button 4: Coming Soon
             GameButton(
-                title = "Sound Buttons",
+                title = "Challenge Mode",
                 description = "Coming Soon...",
                 onClick = { /* TODO: Implement future game */ },
                 enabled = false

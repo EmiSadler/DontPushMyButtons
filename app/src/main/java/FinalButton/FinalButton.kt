@@ -1,12 +1,18 @@
 package FinalButton
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.shape.CircleShape
@@ -17,10 +23,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.clickable
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
+import com.example.dontpushmybuttons.HomeActivity
+import com.example.dontpushmybuttons.R
+import com.example.dontpushmybuttons.ui.theme.DontPushMyButtonsTheme
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
@@ -28,14 +37,33 @@ import kotlin.random.Random
 class FinalButton : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContent {
-            FinalButtonScreen()
+            val systemDarkTheme = isSystemInDarkTheme()
+            var isDarkTheme by rememberSaveable {
+                mutableStateOf(systemDarkTheme)
+            }
+
+            DontPushMyButtonsTheme(darkTheme = isDarkTheme) {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    FinalButtonScreen(
+                        isDarkTheme = isDarkTheme,
+                        onThemeChange = { isDarkTheme = it }
+                    )
+                }
+            }
         }
     }
 }
 
 @Composable
-fun FinalButtonScreen() {
+fun FinalButtonScreen(
+    isDarkTheme: Boolean,
+    onThemeChange: (Boolean) -> Unit
+) {
     val gridSize = 5 * 5
     var buttons by remember { mutableStateOf(List(gridSize) { true }) }
     val remainingButtons = buttons.count { it }
@@ -59,68 +87,113 @@ fun FinalButtonScreen() {
         }
     }
 
-    // Sassy Switches color palette
+    // SassySwitches color palette - matching the exact colors
+    val colourRed = Color(0xFFF45B69)
+    val colourGreen = Color(0xFF92EF80)
+    val colourYellow = Color(0xFFFFBE0B)
+    val colourTeal = Color(0xFF028090)
+    val colourBlue = Color(0xFF9CFFFA)
+    val colourDarkGreen = Color(0xFF137547)
+
     val colors = listOf(
-        Color(0xFFB388FF), // Purple
-        Color(0xFF8C9EFF), // Indigo
-        Color(0xFF80D8FF), // Light Blue
-        Color(0xFFA7FFEB), // Teal
-        Color(0xFFFF8A80)  // Red
+        colourRed,
+        colourGreen,
+        colourYellow,
+        colourTeal,
+        colourBlue,
+        colourDarkGreen
     )
 
+    // Randomize colors for each button position (remember to avoid recomposition)
+    val randomizedColors = remember {
+        List(gridSize) { colors.random() }
+    }
+
     Box(modifier = Modifier.fillMaxSize()) {
-        // Game content
+        // Main content with header
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 4.dp, vertical = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            modifier = Modifier.fillMaxSize()
         ) {
-            repeat(5) { row ->
+            // Header with theme switch and logo (matching SassySwitches pattern)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                AppLogo(
+                    modifier = Modifier.size(60.dp)
+                )
+
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    repeat(5) { col ->
-                        val index = row * 5 + col
-                        val color = colors[index % colors.size]
-                        val shape = if ((index + 1) % 2 == 1) CircleShape else RoundedCornerShape(8.dp)
+                    Text(
+                        text = if (isDarkTheme) "Dark" else "Light",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Switch(
+                        checked = isDarkTheme,
+                        onCheckedChange = onThemeChange
+                    )
+                }
+            }
 
-                        // Show button logic
-                        val shouldShowButton = if (remainingButtons == 1) {
-                            val lastButtonIndex = buttons.indexOfFirst { it }
-                            row == randomRow && col == randomCol && lastButtonIndex != -1
-                        } else {
-                            buttons[index]
-                        }
+            // Game content
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 4.dp, vertical = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                repeat(5) { row ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        repeat(5) { col ->
+                            val index = row * 5 + col
+                            val color = randomizedColors[index]
+                            val shape = if ((index + 1) % 2 == 1) CircleShape else RoundedCornerShape(8.dp)
 
-                        if (shouldShowButton) {
-                            val buttonIndex = if (remainingButtons == 1) {
-                                buttons.indexOfFirst { it }
+                            // Show button logic
+                            val shouldShowButton = if (remainingButtons == 1) {
+                                val lastButtonIndex = buttons.indexOfFirst { it }
+                                row == randomRow && col == randomCol && lastButtonIndex != -1
                             } else {
-                                index
+                                buttons[index]
                             }
 
-                            Button(
-                                onClick = {
-                                    buttons = buttons.toMutableList().also { it[buttonIndex] = false }
-                                },
-                                colors = ButtonDefaults.buttonColors(containerColor = color),
-                                shape = shape,
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .fillMaxHeight()
-                            ) {
-                                Text("${buttonIndex + 1}")
+                            if (shouldShowButton) {
+                                val buttonIndex = if (remainingButtons == 1) {
+                                    buttons.indexOfFirst { it }
+                                } else {
+                                    index
+                                }
+
+                                Button(
+                                    onClick = {
+                                        buttons = buttons.toMutableList().also { it[buttonIndex] = false }
+                                    },
+                                    colors = ButtonDefaults.buttonColors(containerColor = color),
+                                    shape = shape,
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .fillMaxHeight()
+                                ) {
+                                    Text("${buttonIndex + 1}")
+                                }
+                            } else {
+                                Spacer(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .fillMaxHeight()
+                                )
                             }
-                        } else {
-                            Spacer(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .fillMaxHeight()
-                            )
                         }
                     }
                 }
@@ -132,6 +205,21 @@ fun FinalButtonScreen() {
             SuccessOverlay()
         }
     }
+}
+
+@Composable
+fun AppLogo(modifier: Modifier = Modifier) {
+    val context = LocalContext.current
+
+    Image(
+        painter = painterResource(id = R.drawable.logo),
+        contentDescription = "App Logo",
+        modifier = modifier
+            .clickable {
+                val intent = Intent(context, HomeActivity::class.java)
+                context.startActivity(intent)
+            }
+    )
 }
 
 @Composable

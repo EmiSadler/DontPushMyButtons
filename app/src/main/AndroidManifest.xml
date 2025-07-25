@@ -27,9 +27,9 @@
             </intent-filter>
         </activity>
 
-        <!-- Original Don't Push My Buttons Game -->
+        <!-- Sus Emoji Game -->
         <activity
-            android:name=".MainActivity"
+            android:name="SusEmoji.SusEmoji"
             android:exported="false"
             android:theme="@style/Theme.DontPushMyButtons" />
 
@@ -43,7 +43,7 @@
         <activity 
             android:name="FinalButton.FinalButton"
             android:exported="false"
-            android:theme="@style/Theme.DontPushMyButtoms" />
+            android:theme="@style/Theme.DontPushMyButtons" />
 
         <!-- Robo Remember Game -->
         <activity

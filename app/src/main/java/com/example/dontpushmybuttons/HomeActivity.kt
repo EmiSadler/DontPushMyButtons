@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.dontpushmybuttons.ui.theme.DontPushMyButtonsTheme
 import SassySwitches.SassySwitches
+import SusEmoji.SusEmoji
 
 class HomeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -132,12 +133,14 @@ fun HomeScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
-            // Button 1: Don't Push My Buttons (Original Game)
+            // Button 1: SusEmoji Game
             GameButton(
-                title = "Emoji Game",
-                description = "Coming Soon...",
-                onClick = { /* TODO: Implement future game */ },
-                enabled = false
+                title = "Sus Emoji",
+                description = "Find the emoji that matches the clue!",
+                onClick = {
+                    val intent = Intent(context, SusEmoji::class.java)
+                    context.startActivity(intent)
+                }
             )
 
             // Button 2: Sassy Switches

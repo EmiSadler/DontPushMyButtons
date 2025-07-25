@@ -1,11 +1,12 @@
-package com.example.dontpushmybuttons
+package SassySwitches
 
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.asComposePath
 import androidx.graphics.shapes.CornerRounding
 import androidx.graphics.shapes.RoundedPolygon
 import androidx.graphics.shapes.toPath
 
-fun createSmoothHexagonPath(size: Float): androidx.compose.ui.graphics.Path {
+fun createSmoothHexagonPath(size: Float): Path {
     val roundedPolygon = RoundedPolygon(
         numVertices = 6,
         radius = size / 1.9f,
@@ -16,7 +17,7 @@ fun createSmoothHexagonPath(size: Float): androidx.compose.ui.graphics.Path {
     return roundedPolygon.toPath().asComposePath()
 }
 
-fun createSmoothTrianglePath(size: Float): androidx.compose.ui.graphics.Path {
+fun createSmoothTrianglePath(size: Float): Path {
     val roundedTriangle = RoundedPolygon(
         numVertices = 3,
         radius = size / 1.6f,
@@ -28,7 +29,7 @@ fun createSmoothTrianglePath(size: Float): androidx.compose.ui.graphics.Path {
     return roundedTriangle.toPath().asComposePath()
 }
 
-fun createSmoothPentagonPath(size: Float): androidx.compose.ui.graphics.Path {
+fun createSmoothPentagonPath(size: Float): Path {
     val roundedPentagon = RoundedPolygon(
         numVertices = 5,
         radius = size / 1.7f,

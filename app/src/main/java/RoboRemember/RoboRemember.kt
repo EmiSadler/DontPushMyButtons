@@ -10,6 +10,7 @@ import android.os.VibratorManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.material3.AlertDialog
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -101,24 +102,21 @@ fun RoboRememberGame(
     var playerInput by remember { mutableStateOf(listOf<Int>()) }
     var currentlyLit by remember { mutableIntStateOf(-1) }
     var showingIndex by remember { mutableIntStateOf(0) }
+    var isGameStarted by remember { mutableStateOf(false) }
+    var showHowToDialog by remember { mutableStateOf(false) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        // Header with theme switch and logo
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+    if (!isGameStarted) {
+// Landing Page
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            AppLogo(
-                modifier = Modifier.size(180.dp) // 3x larger (was 60.dp)
-            )
-
+            // Header with theme switch
             Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
@@ -131,162 +129,268 @@ fun RoboRememberGame(
                     onCheckedChange = onThemeChange
                 )
             }
-        }
 
-        // Use weight to center the game content vertically
-        Spacer(modifier = Modifier.weight(0.3f))
+            Spacer(modifier = Modifier.weight(0.3f))
 
-        // Game Title
-        Text(
-            text = "Robo Remember",
-            style = MaterialTheme.typography.headlineLarge,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary
-        )
+            // Logo
+            AppLogo(modifier = Modifier.size(360.dp))
 
-        Spacer(modifier = Modifier.height(16.dp))
+            // Start Game button
+            Button(
+                onClick = { isGameStarted = true },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                )
+            ) {
+                Text(
+                    text = "Start Game",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+            }
 
-        // Score display
-        if (gameState != GameState.READY) {
-            Text(
-                text = "Score: $score",
-                style = MaterialTheme.typography.headlineMedium,
-                color = MaterialTheme.colorScheme.onSurface
-            )
             Spacer(modifier = Modifier.height(16.dp))
+
+            // How To button
+            Button(
+                onClick = { showHowToDialog = true },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.secondary
+                )
+            ) {
+                Text(
+                    text = "How To Play",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            Spacer(modifier = Modifier.weight(0.2f))
         }
 
-        // Game status text
-        val statusText = when (gameState) {
-            GameState.READY -> "Tap 'Start Game' to begin!"
-            GameState.SHOWING_SEQUENCE -> "Watch the sequence..."
-            GameState.WAITING_FOR_INPUT -> "Repeat the sequence!"
-            GameState.GAME_OVER -> "Game Over! Final Score: $score"
+        // How To Dialog
+        if (showHowToDialog) {
+            AlertDialog(
+                onDismissRequest = { showHowToDialog = false },
+                title = {
+                    Text(
+                        text = "How to Play Robo Remember",
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                text = {
+                    Text(
+                        text = "1. Watch as the buttons light up in sequence\n\n" +
+                                "2. Repeat the sequence by tapping the buttons in the same order\n\n" +
+                                "3. Each round adds one more button to remember\n\n" +
+                                "4. If you make a mistake, the game ends\n\n" +
+                                "5. Try to get the highest score possible!",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                },
+                confirmButton = {
+                    Button(
+                        onClick = { showHowToDialog = false }
+                    ) {
+                        Text("Got it!")
+                    }
+                }
+            )
         }
-
-        Text(
-            text = statusText,
-            style = MaterialTheme.typography.bodyLarge,
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.padding(horizontal = 16.dp)
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        // Game buttons grid (2x2) - Made larger and better centered
+    } else {
+        // Game Screen
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(24.dp) // Increased spacing
-        ) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(24.dp) // Increased spacing
-            ) {
-                SimonButton(
-                    buttonId = 0,
-                    color = ButtonColor.RED,
-                    isLit = currentlyLit == 0,
-                    isEnabled = gameState == GameState.WAITING_FOR_INPUT,
-                    onClick = {
-                        handleButtonClick(0, gameState, currentSequence, playerInput, score) { newState, newPlayerInput, newScore, newSequence ->
-                            gameState = newState
-                            playerInput = newPlayerInput
-                            score = newScore
-                            currentSequence = newSequence
-                        }
-                    }
-                )
-                SimonButton(
-                    buttonId = 1,
-                    color = ButtonColor.GREEN,
-                    isLit = currentlyLit == 1,
-                    isEnabled = gameState == GameState.WAITING_FOR_INPUT,
-                    onClick = {
-                        handleButtonClick(1, gameState, currentSequence, playerInput, score) { newState, newPlayerInput, newScore, newSequence ->
-                            gameState = newState
-                            playerInput = newPlayerInput
-                            score = newScore
-                            currentSequence = newSequence
-                        }
-                    }
-                )
-            }
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(24.dp) // Increased spacing
-            ) {
-                SimonButton(
-                    buttonId = 2,
-                    color = ButtonColor.BLUE,
-                    isLit = currentlyLit == 2,
-                    isEnabled = gameState == GameState.WAITING_FOR_INPUT,
-                    onClick = {
-                        handleButtonClick(2, gameState, currentSequence, playerInput, score) { newState, newPlayerInput, newScore, newSequence ->
-                            gameState = newState
-                            playerInput = newPlayerInput
-                            score = newScore
-                            currentSequence = newSequence
-                        }
-                    }
-                )
-                SimonButton(
-                    buttonId = 3,
-                    color = ButtonColor.YELLOW,
-                    isLit = currentlyLit == 3,
-                    isEnabled = gameState == GameState.WAITING_FOR_INPUT,
-                    onClick = {
-                        handleButtonClick(3, gameState, currentSequence, playerInput, score) { newState, newPlayerInput, newScore, newSequence ->
-                            gameState = newState
-                            playerInput = newPlayerInput
-                            score = newScore
-                            currentSequence = newSequence
-                        }
-                    }
-                )
-            }
-        }
-
-        // Add weight to center vertically and push Start button to bottom
-        Spacer(modifier = Modifier.weight(0.4f))
-
-        // Start/Restart button
-        Button(
-            onClick = {
-                // Start new game
-                currentSequence = listOf((0..3).random())
-                playerInput = emptyList()
-                score = 0
-                gameState = GameState.SHOWING_SEQUENCE
-                showingIndex = 0
-            },
             modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary
-            )
+                .fillMaxSize()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = if (gameState == GameState.READY || gameState == GameState.GAME_OVER) "Start Game" else "Restart",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
-            )
-        }
-    }
+            // Header with theme switch and logo
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                AppLogo(
+                    modifier = Modifier.size(120.dp)
+                )
 
-    // Handle sequence showing
-    LaunchedEffect(gameState, showingIndex, currentSequence) {
-        if (gameState == GameState.SHOWING_SEQUENCE) {
-            if (showingIndex < currentSequence.size) {
-                delay(600) // Pause between buttons
-                currentlyLit = currentSequence[showingIndex]
-                delay(600) // Keep button lit
-                currentlyLit = -1
-                delay(200) // Brief pause
-                showingIndex++
-            } else {
-                // Sequence shown, wait for player input
-                gameState = GameState.WAITING_FOR_INPUT
-                showingIndex = 0
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = if (isDarkTheme) "Dark" else "Light",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Switch(
+                        checked = isDarkTheme,
+                        onCheckedChange = onThemeChange
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.weight(0.3f))
+
+            // Game Title
+            Text(
+                text = "Robo Remember",
+                style = MaterialTheme.typography.headlineLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Score display
+            if (gameState != GameState.READY) {
+                Text(
+                    text = "Score: $score",
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
+            // Game status text
+            val statusText = when (gameState) {
+                GameState.READY -> "Tap 'Start Game' to begin!"
+                GameState.SHOWING_SEQUENCE -> "Watch the sequence..."
+                GameState.WAITING_FOR_INPUT -> "Repeat the sequence!"
+                GameState.GAME_OVER -> "Game Over! Final Score: $score"
+            }
+
+            Text(
+                text = statusText,
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            // Game buttons grid (2x2) - Made larger and better centered
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(24.dp)
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(24.dp)
+                ) {
+                    SimonButton(
+                        buttonId = 0,
+                        color = ButtonColor.RED,
+                        isLit = currentlyLit == 0,
+                        isEnabled = gameState == GameState.WAITING_FOR_INPUT,
+                        onClick = {
+                            handleButtonClick(0, gameState, currentSequence, playerInput, score) { newState, newPlayerInput, newScore, newSequence ->
+                                gameState = newState
+                                playerInput = newPlayerInput
+                                score = newScore
+                                currentSequence = newSequence
+                            }
+                        }
+                    )
+                    SimonButton(
+                        buttonId = 1,
+                        color = ButtonColor.GREEN,
+                        isLit = currentlyLit == 1,
+                        isEnabled = gameState == GameState.WAITING_FOR_INPUT,
+                        onClick = {
+                            handleButtonClick(1, gameState, currentSequence, playerInput, score) { newState, newPlayerInput, newScore, newSequence ->
+                                gameState = newState
+                                playerInput = newPlayerInput
+                                score = newScore
+                                currentSequence = newSequence
+                            }
+                        }
+                    )
+                }
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(24.dp)
+                ) {
+                    SimonButton(
+                        buttonId = 2,
+                        color = ButtonColor.BLUE,
+                        isLit = currentlyLit == 2,
+                        isEnabled = gameState == GameState.WAITING_FOR_INPUT,
+                        onClick = {
+                            handleButtonClick(2, gameState, currentSequence, playerInput, score) { newState, newPlayerInput, newScore, newSequence ->
+                                gameState = newState
+                                playerInput = newPlayerInput
+                                score = newScore
+                                currentSequence = newSequence
+                            }
+                        }
+                    )
+                    SimonButton(
+                        buttonId = 3,
+                        color = ButtonColor.YELLOW,
+                        isLit = currentlyLit == 3,
+                        isEnabled = gameState == GameState.WAITING_FOR_INPUT,
+                        onClick = {
+                            handleButtonClick(3, gameState, currentSequence, playerInput, score) { newState, newPlayerInput, newScore, newSequence ->
+                                gameState = newState
+                                playerInput = newPlayerInput
+                                score = newScore
+                                currentSequence = newSequence
+                            }
+                        }
+                    )
+                }
+            }
+
+            // Add weight to center vertically and push Start button to bottom
+            Spacer(modifier = Modifier.weight(0.4f))
+
+            // Start/Restart button
+            Button(
+                onClick = {
+                    // Start new game
+                    currentSequence = listOf((0..3).random())
+                    playerInput = emptyList()
+                    score = 0
+                    gameState = GameState.SHOWING_SEQUENCE
+                    showingIndex = 0
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                )
+            ) {
+                Text(
+                    text = if (gameState == GameState.READY || gameState == GameState.GAME_OVER) "Start Game" else "Restart",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+
+        // Handle sequence showing
+        LaunchedEffect(gameState, showingIndex, currentSequence) {
+            if (gameState == GameState.SHOWING_SEQUENCE) {
+                if (showingIndex < currentSequence.size) {
+                    delay(600) // Pause between buttons
+                    currentlyLit = currentSequence[showingIndex]
+                    delay(600) // Keep button lit
+                    currentlyLit = -1
+                    delay(200) // Brief pause
+                    showingIndex++
+                } else {
+                    // Sequence shown, wait for player input
+                    gameState = GameState.WAITING_FOR_INPUT
+                    showingIndex = 0
+                }
             }
         }
     }
@@ -304,8 +408,8 @@ fun SimonButton(
 
     Box(
         modifier = Modifier
-            .size(160.dp) // Made larger (was 120.dp)
-            .clip(RoundedCornerShape(20.dp)) // Increased corner radius
+            .size(160.dp)
+            .clip(RoundedCornerShape(20.dp))
             .background(if (isLit) color.lit else color.normal)
             .clickable(enabled = isEnabled) {
                 // Add haptic feedback when button is pressed during input
@@ -316,11 +420,11 @@ fun SimonButton(
             },
         contentAlignment = Alignment.Center
     ) {
-        // Button number text - Made larger
+        // Button number text
         Text(
             text = "${buttonId + 1}",
             color = Color.White,
-            style = MaterialTheme.typography.headlineLarge, // Made larger (was headlineMedium)
+            style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Bold
         )
     }
@@ -331,8 +435,8 @@ fun AppLogo(modifier: Modifier = Modifier) {
     val context = LocalContext.current
 
     Image(
-        painter = painterResource(id = R.drawable.logo),
-        contentDescription = "App Logo",
+        painter = painterResource(id = R.drawable.roboremember),
+        contentDescription = "RoboRemember Logo",
         modifier = modifier
             .clickable {
                 val intent = Intent(context, HomeActivity::class.java)

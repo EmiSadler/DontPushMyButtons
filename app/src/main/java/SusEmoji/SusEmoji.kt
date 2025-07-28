@@ -19,7 +19,6 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -29,6 +28,8 @@ import androidx.compose.ui.unit.sp
 import com.example.dontpushmybuttons.HomeActivity
 import com.example.dontpushmybuttons.R
 import com.example.dontpushmybuttons.ui.theme.DontPushMyButtonsTheme
+import kotlinx.coroutines.delay
+import kotlin.math.roundToInt
 
 class SusEmoji : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,10 +61,148 @@ fun SusEmojiGame(
     isDarkTheme: Boolean,
     onThemeChange: (Boolean) -> Unit
 ) {
+    // Landing page state
+    var isGameStarted by remember { mutableStateOf(false) }
+    var showHowToDialog by remember { mutableStateOf(false) }
+
+    if (!isGameStarted) {
+        // Landing Page
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // Header with theme switch
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = if (isDarkTheme) "Dark" else "Light",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Switch(
+                    checked = isDarkTheme,
+                    onCheckedChange = onThemeChange
+                )
+            }
+
+            Spacer(modifier = Modifier.weight(0.3f))
+
+            // Logo
+            AppLogo(modifier = Modifier.size(360.dp))
+
+            // Start Game button
+            Button(
+                onClick = { isGameStarted = true },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                )
+            ) {
+                Text(
+                    text = "Start Game",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // How To button
+            Button(
+                onClick = { showHowToDialog = true },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.secondary
+                )
+            ) {
+                Text(
+                    text = "How To Play",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            Spacer(modifier = Modifier.weight(0.2f))
+        }
+
+        // How To Dialog
+        if (showHowToDialog) {
+            AlertDialog(
+                onDismissRequest = { showHowToDialog = false },
+                title = {
+                    Text(
+                        text = "How to Play Sus Emoji",
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                text = {
+                    Text(
+                        text = "1. Read the clue at the top of the screen\n\n" +
+                                "2. Find and tap the emoji that matches the clue\n\n" +
+                                "3. When you find the correct emoji, you get 1 point and a new clue appears\n\n" +
+                                "4. You have 60 seconds to find as many correct emojis as possible\n\n" +
+                                "5. Try to get the highest score before time runs out!",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                },
+                confirmButton = {
+                    Button(
+                        onClick = { showHowToDialog = false }
+                    ) {
+                        Text("Got it!")
+                    }
+                }
+            )
+        }
+    } else {
+        // Game Screen
+        GameScreen(
+            isDarkTheme = isDarkTheme,
+            onThemeChange = onThemeChange
+        )
+    }
+}
+
+@Composable
+fun GameScreen(
+    isDarkTheme: Boolean,
+    onThemeChange: (Boolean) -> Unit
+) {
     // Game state
     var currentClue by remember { mutableStateOf("") }
     var secretEmoji by remember { mutableStateOf("") }
     var selectedEmojis by remember { mutableStateOf(setOf<String>()) }
+    var gameStartTime by remember { mutableStateOf(System.currentTimeMillis()) }
+    var isGameOver by remember { mutableStateOf(false) }
+    var score by remember { mutableStateOf(0) }
+    var elapsedTime by remember { mutableStateOf(0f) }
+    var gameKey by remember { mutableStateOf(0) } // Key to trigger game reset
+
+    // Timer effect - 60 second timer, restart when gameKey changes
+    LaunchedEffect(gameKey) {
+        gameStartTime = System.currentTimeMillis()
+        elapsedTime = 0f
+        isGameOver = false
+        score = 0
+
+        while (!isGameOver) {
+            delay(100) // Update every 100ms for smooth timer display
+            elapsedTime = (System.currentTimeMillis() - gameStartTime) / 1000f
+            if (elapsedTime >= 60f) { // 60 seconds timer
+                isGameOver = true
+            }
+        }
+    }
 
     // Full collection of diverse emojis paired with clues
     val allEmojiClues = remember {
@@ -184,17 +323,6 @@ fun SusEmojiGame(
             "🔥" to "Hot orange and red element",
             "💧" to "Single drop of water",
             "🌊" to "Large ocean wave",
-            "🌍" to "",
-            "🌎" to "",
-            "🌏" to "",
-            "🌑" to "",
-            "🌒" to "",
-            "🌓" to "",
-            "🌔" to "",
-            "🌕" to "",
-            "🌖" to "",
-            "🌗" to "",
-            "🌘" to "",
 
             // Objects & Tools
             "⚽" to "Black and white ball kicked with feet",
@@ -207,26 +335,6 @@ fun SusEmojiGame(
             "🎱" to "Black ball with number 8",
             "🏓" to "Small white ball for table tennis",
             "🏸" to "Shuttlecock sport with rackets",
-            "🥅" to "",
-            "⛳" to "",
-            "🎯" to "",
-            "🏹" to "",
-            "🎣" to "",
-            "🥊" to "",
-            "🥋" to "",
-            "🎽" to "",
-            "🛹" to "",
-            "🛷" to "",
-            "⛸️" to "",
-            "🥌" to "",
-            "🎿" to "",
-            "⛷️" to "",
-            "🏂" to "",
-            "🪀" to "",
-            "🎭" to "",
-            "🎨" to "",
-            "🎬" to "",
-            "🎤" to "",
 
             // Hearts & Symbols
             "❤️" to "Symbol of love and affection",
@@ -238,97 +346,27 @@ fun SusEmojiGame(
             "🖤" to "Heart in the darkest color",
             "🤍" to "Heart in the purest color",
             "🤎" to "Heart in the color of chocolate",
-            "💔" to "Broken symbol of love",
-
-            // Faces & People
-            "😀" to "",
-            "😃" to "",
-            "😄" to "",
-            "😁" to "",
-            "😆" to "",
-            "😅" to "",
-            "🤣" to "",
-            "😂" to "",
-            "🙂" to "",
-            "🙃" to "",
-            "😉" to "",
-            "😊" to "",
-            "😇" to "",
-            "🥰" to "",
-            "😍" to "",
-            "🤩" to "",
-            "😘" to "",
-            "😗" to "",
-            "☺️" to "",
-            "😚" to "",
-            "😙" to "",
-            "🥲" to "",
-            "😋" to "",
-            "😛" to "",
-            "😜" to "",
-            "🤪" to "",
-            "😝" to "",
-            "🤑" to "",
-            "🤗" to "",
-            "🤭" to "",
-
-            // Fantasy & Magic
-            "🦄" to "",
-            "🐉" to "",
-            "🧚" to "",
-            "🧙" to "",
-            "🧛" to "",
-            "🧟" to "",
-            "🧞" to "",
-            "🧜" to "",
-            "🧝" to "",
-            "🎃" to "",
-            "👻" to "",
-            "💀" to "",
-            "☠️" to "",
-            "👽" to "",
-            "👾" to "",
-            "🤖" to "",
-            "🔮" to "",
-            "🪄" to "",
-            "⚡" to "",
-            "💥" to "",
-
-            // Tools & Objects
-            "🔨" to "",
-            "🔧" to "",
-            "⚙️" to "",
-            "🧰" to "",
-            "🔩" to "",
-            "⛏️" to "",
-            "🪓" to "",
-            "🔪" to "",
-            "🗡️" to "",
-            "🛡️" to "",
-            "🏺" to "",
-            "🧭" to "",
-            "🧲" to "",
-            "💎" to "",
-            "⚖️" to "",
-            "🔗" to "",
-            "⛓️" to "",
-            "🧯" to "",
-            "🛒" to "",
-            "🎁" to ""
+            "💔" to "Broken symbol of love"
         )
     }
 
     // Randomly select 104 emoji-clue pairs for this game round (8x13 grid)
-    val gameEmojiClues = remember {
+    // Regenerate when gameKey changes
+    val gameEmojiClues = remember(gameKey) {
         allEmojiClues.filter { it.second.isNotEmpty() }.shuffled().take(104)
     }
 
-    // Select a secret emoji and its clue for this round
-    val (currentSecretEmoji, currentSecretClue) = remember {
+    // Function to select a new secret emoji and clue
+    fun selectNewSecretEmoji() {
         val secretPair = gameEmojiClues.random()
         secretEmoji = secretPair.first
         currentClue = secretPair.second
-        secretPair
+        selectedEmojis = setOf() // Clear previous selections
+    }
+
+    // Select initial secret emoji and clue when game starts
+    LaunchedEffect(gameKey) {
+        selectNewSecretEmoji()
     }
 
     // Extract just the emojis for display
@@ -337,7 +375,7 @@ fun SusEmojiGame(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        // Header with logo and theme toggle
+        // Header with logo and theme toggle + score/time
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -346,20 +384,41 @@ fun SusEmojiGame(
             verticalAlignment = Alignment.CenterVertically
         ) {
             AppLogo(
-                modifier = Modifier.size(60.dp)
+                modifier = Modifier.size(120.dp)
             )
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically
+            // Vertically stacked: Dark/Light toggle, Time, and Score
+            Column(
+                horizontalAlignment = Alignment.End
             ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = if (isDarkTheme) "Dark" else "Light",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Switch(
+                        checked = isDarkTheme,
+                        onCheckedChange = onThemeChange
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(4.dp))
+
                 Text(
-                    text = if (isDarkTheme) "Dark" else "Light",
-                    style = MaterialTheme.typography.bodyMedium
+                    text = "Time: ${(60 - elapsedTime).roundToInt()}s",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
                 )
-                Spacer(modifier = Modifier.width(8.dp))
-                Switch(
-                    checked = isDarkTheme,
-                    onCheckedChange = onThemeChange
+
+                Text(
+                    text = "Score: $score",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
         }
@@ -392,7 +451,7 @@ fun SusEmojiGame(
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
 
-                // Show selected emojis
+                // Show selected emojis for current round
                 if (selectedEmojis.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
@@ -417,14 +476,74 @@ fun SusEmojiGame(
                     emoji = emoji,
                     isSelected = selectedEmojis.contains(emoji),
                     onClick = {
-                        selectedEmojis = if (selectedEmojis.contains(emoji)) {
-                            selectedEmojis - emoji
-                        } else {
-                            selectedEmojis + emoji
+                        if (!isGameOver) {
+                            if (emoji == secretEmoji) {
+                                // Correct emoji clicked - score point and start new round
+                                score += 1
+                                selectNewSecretEmoji() // Immediately start new round
+                            } else {
+                                // Track selected emojis for visual feedback
+                                selectedEmojis = if (selectedEmojis.contains(emoji)) {
+                                    selectedEmojis - emoji
+                                } else {
+                                    selectedEmojis + emoji
+                                }
+                            }
                         }
                     }
                 )
             }
+        }
+
+        // Game Over Dialog
+        if (isGameOver) {
+            AlertDialog(
+                onDismissRequest = { },
+                title = {
+                    Text(
+                        text = "⏰ Time's Up!",
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                text = {
+                    Column {
+                        Text("Game completed!")
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text("You found $score emojis in 60 seconds!")
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            "Final Score: $score points",
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        val averageTime = if (score > 0) (60f / score).roundToInt() else 0
+                        Text("Average time per emoji: ${averageTime}s")
+                    }
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            // Restart game
+                            gameKey += 1 // Change the game key to reset the game
+                        }
+                    ) {
+                        Text("Play Again")
+                    }
+                },
+                dismissButton = {
+                    val context = LocalContext.current
+                    Button(
+                        onClick = {
+                            val intent = Intent(context, HomeActivity::class.java)
+                            context.startActivity(intent)
+                        }
+                    ) {
+                        Text("Home")
+                    }
+                }
+            )
         }
     }
 }
@@ -475,8 +594,8 @@ fun AppLogo(modifier: Modifier = Modifier) {
     val context = LocalContext.current
 
     Image(
-        painter = painterResource(id = R.drawable.logo),
-        contentDescription = "App Logo",
+        painter = painterResource(id = R.drawable.susemo),
+        contentDescription = "Sus Emoji Logo",
         modifier = modifier
             .clickable {
                 val intent = Intent(context, HomeActivity::class.java)

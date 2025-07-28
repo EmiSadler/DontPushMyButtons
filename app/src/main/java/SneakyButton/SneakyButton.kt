@@ -1,4 +1,4 @@
-package FinalButton
+package SneakyButton
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,7 +9,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -25,14 +24,12 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import com.example.dontpushmybuttons.HomeActivity
 import com.example.dontpushmybuttons.R
 import com.example.dontpushmybuttons.ui.theme.DontPushMyButtonsTheme
 import kotlin.math.cos
 import kotlin.math.sin
-import kotlin.random.Random
 
 class FinalButton : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -123,7 +120,7 @@ fun FinalButtonScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 AppLogo(
-                    modifier = Modifier.size(60.dp)
+                    modifier = Modifier.size(120.dp)
                 )
 
                 Row(
@@ -212,8 +209,8 @@ fun AppLogo(modifier: Modifier = Modifier) {
     val context = LocalContext.current
 
     Image(
-        painter = painterResource(id = R.drawable.logo),
-        contentDescription = "App Logo",
+        painter = painterResource(id = R.drawable.sneakybutton),
+        contentDescription = "Sneaky Button Logo",
         modifier = modifier
             .clickable {
                 val intent = Intent(context, HomeActivity::class.java)

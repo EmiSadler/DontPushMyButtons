@@ -41,7 +41,7 @@
       
         <!-- Final Button Game -->
         <activity 
-            android:name="FinalButton.FinalButton"
+            android:name="SneakyButton.FinalButton"
             android:exported="false"
             android:theme="@style/Theme.DontPushMyButtons" />
 

@@ -106,16 +106,8 @@ fun HomeScreen(
                 painter = painterResource(id = R.drawable.logo),
                 contentDescription = "Don't Push My Buttons Logo",
                 modifier = Modifier
-                    .size(200.dp)
+                    .size(400.dp)
                     .padding(bottom = 16.dp)
-            )
-
-            Text(
-                text = "Don't Push My Buttons",
-                style = MaterialTheme.typography.headlineLarge,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.primary
             )
 
             Text(
@@ -162,20 +154,12 @@ fun HomeScreen(
                     context.startActivity(intent)
                 }
             )
-
-            // Button 4: Coming Soon
+// Button 4: Sneaky Button
             GameButton(
-                title = "Challenge Mode",
-                description = "Coming Soon...",
-                onClick = { /* TODO: Implement future game */ },
-                enabled = false
-            )
-
-            GameButton(
-                title = "Final Button",
+                title = "Sneaky Button",
                 description = "A screen full of buttons. Click to make them disappear!",
                 onClick = {
-                    val intent = Intent(context, FinalButton.FinalButton::class.java)
+                    val intent = Intent(context, SneakyButton.FinalButton::class.java)
                     context.startActivity(intent)
                 },
                 enabled = true

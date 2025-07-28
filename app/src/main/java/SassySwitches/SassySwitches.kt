@@ -17,11 +17,13 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -40,12 +42,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.dontpushmybuttons.HomeActivity
 import com.example.dontpushmybuttons.R
 import com.example.dontpushmybuttons.ui.theme.DontPushMyButtonsTheme
-
 
 class SassySwitches : ComponentActivity() {
     private lateinit var soundManager: SoundManager
@@ -59,60 +61,17 @@ class SassySwitches : ComponentActivity() {
             var isDarkTheme by rememberSaveable {
                 mutableStateOf(systemDarkTheme)
             }
-            var counter by remember { mutableStateOf(0) }
-            var isGameRunning by remember { mutableStateOf(false) }
-            var gameOver by remember { mutableStateOf(false) }
-            var currentHint by remember { mutableStateOf<String?>(null) }
 
             DontPushMyButtonsTheme(darkTheme = isDarkTheme) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Row(
-                            modifier = Modifier
-                                .offset(x = 45.dp)
-                                .padding(horizontal = 16.dp, vertical = 2.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            if (isGameRunning && !gameOver) {
-                                Text(
-                                    text = "Count: $counter",
-                                    style = MaterialTheme.typography.headlineSmall,
-                                    modifier = Modifier.weight(1f)
-                                )
-                            }
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                Switch(
-                                    checked = isDarkTheme,
-                                    onCheckedChange = { isDarkTheme = it }
-                                )
-                            }
-                        }
-
-                        FixedGrid(
-                            counter = counter,
-                            onCounterChange = { counter = it },
-                            isGameRunning = isGameRunning,
-                            onGameRunningChange = { isGameRunning = it },
-                            gameOver = gameOver,
-                            onGameOverChange = { gameOver = it },
-                            currentHint = currentHint,
-                            onHintChange = { currentHint = it },
-                            onButtonClick = { isCorrect ->
-                                if (isCorrect) {
-                                    soundManager.playCorrectButtonSound()
-                                } else {
-                                    soundManager.playButtonClickSound()
-                                }
-                            }
-                        )
-                    }
+                    SassySwitchesGame(
+                        isDarkTheme = isDarkTheme,
+                        onThemeChange = { isDarkTheme = it },
+                        soundManager = soundManager
+                    )
                 }
             }
         }
@@ -124,240 +83,340 @@ class SassySwitches : ComponentActivity() {
     }
 }
 
+@Composable
+fun SassySwitchesGame(
+    isDarkTheme: Boolean,
+    onThemeChange: (Boolean) -> Unit,
+    soundManager: SoundManager
+) {
+    // Landing page state
+    var isGameStarted by remember { mutableStateOf(false) }
+    var showHowToDialog by remember { mutableStateOf(false) }
 
+    if (!isGameStarted) {
+        // Landing Page
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // Header with theme switch
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = if (isDarkTheme) "Dark" else "Light",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Switch(
+                    checked = isDarkTheme,
+                    onCheckedChange = onThemeChange
+                )
+            }
+
+            Spacer(modifier = Modifier.weight(0.3f))
+
+            // Logo - using consistent 180dp size like other games
+            AppLogo(modifier = Modifier.size(360.dp))
+
+            // Start Game button - CONSISTENT SIZING with other games
+            Button(
+                onClick = { isGameStarted = true },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                )
+            ) {
+                Text(
+                    text = "Start Game",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // How To button - CONSISTENT SIZING with other games
+            Button(
+                onClick = { showHowToDialog = true },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.secondary
+                )
+            ) {
+                Text(
+                    text = "How To Play",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            Spacer(modifier = Modifier.weight(0.2f))
+        }
+
+        // How To Dialog
+        if (showHowToDialog) {
+            AlertDialog(
+                onDismissRequest = { showHowToDialog = false },
+                title = {
+                    Text(
+                        text = "How to Play Sassy Switches",
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                text = {
+                    Text(
+                        text = "1. Find the correct button based on the clue\n\n" +
+                                "2. Each button has unique properties to help you identify it\n\n" +
+                                "3. Click the button that matches the description\n\n" +
+                                "4. Get hints if you make too many wrong clicks\n\n" +
+                                "5. Try to find the target with as few clicks as possible!",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                },
+                confirmButton = {
+                    Button(
+                        onClick = { showHowToDialog = false }
+                    ) {
+                        Text("Got it!")
+                    }
+                }
+            )
+        }
+    } else {
+        // Game Screen
+        GameScreen(
+            isDarkTheme = isDarkTheme,
+            onThemeChange = onThemeChange,
+            soundManager = soundManager
+        )
+    }
+}
+
+@Composable
+fun GameScreen(
+    isDarkTheme: Boolean,
+    onThemeChange: (Boolean) -> Unit,
+    soundManager: SoundManager
+) {
+    var counter by remember { mutableStateOf(0) }
+    var isGameRunning by remember { mutableStateOf(false) }
+    var gameOver by remember { mutableStateOf(false) }
+    var currentHint by remember { mutableStateOf<String?>(null) }
+
+    Column(modifier = Modifier.padding(16.dp)) {
+        // Header with SassySwitches logo and theme toggle - ADDED LOGO HERE
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 2.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // SassySwitches logo on game page
+            AppLogo(modifier = Modifier.size(120.dp))
+
+            if (isGameRunning && !gameOver) {
+                Text(
+                    text = "Count: $counter",
+                    style = MaterialTheme.typography.headlineSmall
+                )
+            }
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Switch(
+                    checked = isDarkTheme,
+                    onCheckedChange = onThemeChange
+                )
+            }
+        }
+
+        FixedGrid(
+            counter = counter,
+            onCounterChange = { counter = it },
+            isGameRunning = isGameRunning,
+            onGameRunningChange = { isGameRunning = it },
+            gameOver = gameOver,
+            onGameOverChange = { gameOver = it },
+            currentHint = currentHint,
+            onHintChange = { currentHint = it },
+            onButtonClick = { isCorrect ->
+                if (isCorrect) {
+                    soundManager.playCorrectButtonSound()
+                } else {
+                    soundManager.playButtonClickSound()
+                }
+            }
+        )
+    }
+}
 
 @Composable
 fun FixedGrid(
-        counter: Int,
-        onCounterChange: (Int) -> Unit,
-        isGameRunning: Boolean,
-        onGameRunningChange: (Boolean) -> Unit,
-        gameOver: Boolean,
-        onGameOverChange: (Boolean) -> Unit,
-        currentHint: String?,
-        onHintChange: (String?) -> Unit,
-        onButtonClick: (Boolean) -> Unit
-    ) {
-        var targetButtonId by remember { mutableStateOf(0) }
-        var finalScore by remember { mutableStateOf(0) }
-        var incorrectClicks by remember { mutableStateOf(0) }
+    counter: Int,
+    onCounterChange: (Int) -> Unit,
+    isGameRunning: Boolean,
+    onGameRunningChange: (Boolean) -> Unit,
+    gameOver: Boolean,
+    onGameOverChange: (Boolean) -> Unit,
+    currentHint: String?,
+    onHintChange: (String?) -> Unit,
+    onButtonClick: (Boolean) -> Unit
+) {
+    var targetButtonId by remember { mutableStateOf(0) }
+    var finalScore by remember { mutableStateOf(0) }
+    var incorrectClicks by remember { mutableStateOf(0) }
 
-        val items: List<ButtonItem> = listOf(
-            button1,
-            button2,
-            button3,
-            button4,
-            button5,
-            button6,
-            button7,
-            button8,
-            button9,
-            button10,
-            button11,
-            button12,
-            button13,
-            button14,
-            button15,
-            button16,
-            button17,
-            button18,
-            button19,
-            button20,
-            button21,
-            button22,
-            button23,
-            button24,
-            button25,
-            button26,
-            button27,
-            button28,
-            button29,
-            button30,
-            button31,
-            button32
-        )
+    val items: List<ButtonItem> = listOf(
+        button1, button2, button3, button4, button5, button6, button7, button8,
+        button9, button10, button11, button12, button13, button14, button15, button16,
+        button17, button18, button19, button20, button21, button22, button23, button24,
+        button25, button26, button27, button28, button29, button30, button31, button32
+    )
 
-        fun updateHint() {
-            if (incorrectClicks % 5 == 0 && incorrectClicks > 0) {
-                val hintIndex = (incorrectClicks / 5) - 1
-                val targetButton = items.find { it.label == targetButtonId }
-                targetButton?.let {
-                    if (hintIndex < it.hint.size) {
-                        onHintChange(it.hint[hintIndex])
-                    }
+    fun updateHint() {
+        if (incorrectClicks % 5 == 0 && incorrectClicks > 0) {
+            val hintIndex = (incorrectClicks / 5) - 1
+            val targetButton = items.find { it.label == targetButtonId }
+            targetButton?.let {
+                if (hintIndex < it.hint.size) {
+                    onHintChange(it.hint[hintIndex])
                 }
             }
         }
+    }
 
-        fun startNewGame() {
-            onGameRunningChange(true)
-            onGameOverChange(false)
-            onCounterChange(0)
-            incorrectClicks = 0
-            onHintChange(null)
-            targetButtonId = (1..32).random()
-        }
-        Column(modifier = Modifier.fillMaxSize()) {
-            if (!isGameRunning && !gameOver) {
-                AppLogo(
-                    modifier = Modifier
-                        .height(600.dp)
-                        .padding(vertical = 0.dp)
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                        .align(Alignment.CenterHorizontally)
+    fun startNewGame() {
+        onGameRunningChange(true)
+        onGameOverChange(false)
+        onCounterChange(0)
+        incorrectClicks = 0
+        onHintChange(null)
+        targetButtonId = (1..32).random()
+    }
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        if (gameOver) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                AppLogo(modifier = Modifier.size(120.dp))
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Text(
+                    text = "Ok! Ok! You found me!",
+                    style = MaterialTheme.typography.headlineMedium,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+                Text(
+                    text = "Now stop pushing my buttons!",
+                    style = MaterialTheme.typography.headlineMedium,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+                Text(
+                    text = "Final Score: $finalScore",
+                    style = MaterialTheme.typography.headlineSmall,
+                    modifier = Modifier.padding(bottom = 16.dp)
                 )
                 Button(
                     onClick = { startNewGame() },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary
-                    ),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp)
-
+                        .height(56.dp)
                 ) {
-                    Text("Start Game")
+                    Text("Play Again")
                 }
-            } else if (gameOver) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(0.dp),
-
-                    ) {
-                    AppLogo(
-                        modifier = Modifier
-                            .height(400.dp)
-                            .padding(vertical = 0.dp)
-                            .fillMaxWidth()
-                            .align(Alignment.CenterHorizontally)
-                    )
+            }
+        } else {
+            // Game screen
+            Box(modifier = Modifier.fillMaxWidth()) {
+                currentHint?.let { hint ->
                     Text(
-                        text = "Ok! Ok! You found me!",
-                        style = MaterialTheme.typography.headlineMedium,
-                        modifier = Modifier
-                            .align(Alignment.CenterHorizontally)
+                        text = "Hint: $hint",
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontSize = 24.sp,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.padding(16.dp)
                     )
-                    Text(
-                        text = "Now stop pushing my buttons!",
-                        style = MaterialTheme.typography.headlineMedium,
-                        modifier = Modifier
-                            .align(Alignment.CenterHorizontally)
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = "Final Score: $finalScore",
-                        style = MaterialTheme.typography.headlineSmall,
-                        modifier = Modifier
-                            .align(Alignment.CenterHorizontally)
-                    )
-                    Button(
-                        onClick = { startNewGame() },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp)
-                    ) {
-                        Text("Play Again")
-                    }
                 }
-            } else {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                ) {
-                    AppLogo(
-                        modifier = Modifier
-                            .height(100.dp)
-                            .align(Alignment.CenterStart)
+            }
 
-                    )
-                    currentHint?.let { hint ->
-                        Text(
-                            text = "Hint: $hint",
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontSize = 24.sp,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier
-                                .padding(start = 110.dp)
-                                .fillMaxWidth()
-                        )
-                    }
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(4),
+                contentPadding = PaddingValues(8.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.fillMaxSize()
+            ) {
+                items(items) { item ->
+                    ButtonGridItem(
+                        label = item.label,
+                        color = item.color,
+                        shape = item.shape,
+                        onClickIncrement = {
+                            onCounterChange(counter + 1)
+                            val isCorrectButton = item.label == targetButtonId
+                            onButtonClick(isCorrectButton)
 
-                }
-
-
-                Box(
-                    modifier = Modifier.padding(top = 16.dp)
-                        .fillMaxSize()
-                        .padding(8.dp)
-
-                ) {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(4),
-                        contentPadding = PaddingValues(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(4.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        items(items) { item ->
-                            ButtonGridItem(
-                                label = item.label,
-                                color = item.color,
-                                shape = item.shape,
-                                onClickIncrement = {
-                                    onCounterChange(counter + 1)
-                                    val isCorrectButton = item.label == targetButtonId
-                                    onButtonClick(isCorrectButton)
-
-                                    if (isCorrectButton) {
-                                        finalScore = counter + 1
-                                        onGameOverChange(true)
-                                    } else {
-                                        incorrectClicks++
-                                        updateHint()
-                                    }
-                                }
-                            )
+                            if (isCorrectButton) {
+                                finalScore = counter + 1
+                                onGameOverChange(true)
+                            } else {
+                                incorrectClicks++
+                                updateHint()
+                            }
                         }
-                    }
-                    Spacer(modifier = Modifier.height(32.dp))
+                    )
                 }
             }
         }
     }
+}
 
-    @Composable
-    fun ButtonGridItem(label: Int, color: Color, shape: Shape, onClickIncrement: () -> Unit) {
-        Button(
-            onClick = onClickIncrement,
-            colors = ButtonDefaults.buttonColors(containerColor = color),
-            shape = shape,
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(1f)
-        ) {
-            Text(
-                text = label.toString(),
-                style = MaterialTheme.typography.headlineSmall,
-                color = MaterialTheme.colorScheme.onPrimary
-            )
-        }
-    }
-
-    @Composable
-    fun AppLogo(modifier: Modifier = Modifier) {
-        val context = LocalContext.current
-
-        Image(
-            painter = painterResource(id = R.drawable.logo),
-            contentDescription = "App Logo",
-            modifier = modifier
-                .height(100.dp)
-                .padding(vertical = 0.dp)
-                .clickable {
-                    val intent = Intent(context, HomeActivity::class.java)
-                    context.startActivity(intent)
-                },
+@Composable
+fun ButtonGridItem(label: Int, color: Color, shape: Shape, onClickIncrement: () -> Unit) {
+    Button(
+        onClick = onClickIncrement,
+        colors = ButtonDefaults.buttonColors(containerColor = color),
+        shape = shape,
+        modifier = Modifier
+            .fillMaxWidth()
+            .aspectRatio(1f)
+    ) {
+        Text(
+            text = label.toString(),
+            style = MaterialTheme.typography.headlineSmall,
+            color = MaterialTheme.colorScheme.onPrimary
         )
     }
+}
+
+@Composable
+fun AppLogo(modifier: Modifier = Modifier) {
+    val context = LocalContext.current
+
+    Image(
+        painter = painterResource(id = R.drawable.sassyswitches),
+        contentDescription = "SassySwitches Logo",
+        modifier = modifier
+            .clickable {
+                val intent = Intent(context, HomeActivity::class.java)
+                context.startActivity(intent)
+            }
+    )
+}

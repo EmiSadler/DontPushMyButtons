@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,7 +35,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
+import com.example.dontpushmybuttons.utils.ThemeManager
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,9 +58,11 @@ class SassySwitches : ComponentActivity() {
         soundManager = SoundManager(this)
         enableEdgeToEdge()
         setContent {
+            val context = LocalContext.current
+            val themeManager = remember { ThemeManager.getInstance(context) }
             val systemDarkTheme = isSystemInDarkTheme()
-            var isDarkTheme by rememberSaveable {
-                mutableStateOf(systemDarkTheme)
+            var isDarkTheme by remember {
+                mutableStateOf(themeManager.isDarkTheme(systemDarkTheme))
             }
 
             DontPushMyButtonsTheme(darkTheme = isDarkTheme) {
@@ -69,7 +72,10 @@ class SassySwitches : ComponentActivity() {
                 ) {
                     SassySwitchesGame(
                         isDarkTheme = isDarkTheme,
-                        onThemeChange = { isDarkTheme = it },
+                        onThemeChange = { newTheme ->
+                            isDarkTheme = newTheme
+                            themeManager.setDarkTheme(newTheme)
+                        },
                         soundManager = soundManager
                     )
                 }
@@ -120,10 +126,10 @@ fun SassySwitchesGame(
 
             Spacer(modifier = Modifier.weight(0.3f))
 
-            // Logo - using consistent 180dp size like other games
             AppLogo(modifier = Modifier.size(360.dp))
 
-            // Start Game button - CONSISTENT SIZING with other games
+            Spacer(modifier = Modifier.height(32.dp))
+
             Button(
                 onClick = { isGameStarted = true },
                 modifier = Modifier
@@ -142,7 +148,6 @@ fun SassySwitchesGame(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // How To button - CONSISTENT SIZING with other games
             Button(
                 onClick = { showHowToDialog = true },
                 modifier = Modifier
@@ -168,19 +173,18 @@ fun SassySwitchesGame(
                 onDismissRequest = { showHowToDialog = false },
                 title = {
                     Text(
-                        text = "How to Play Sassy Switches",
+                        text = "How to Play SassySwitches",
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold
                     )
                 },
                 text = {
                     Text(
-                        text = "1. Find the correct button based on the clue\n\n" +
-                                "2. Each button has unique properties to help you identify it\n\n" +
-                                "3. Click the button that matches the description\n\n" +
-                                "4. Get hints if you make too many wrong clicks\n\n" +
-                                "5. Try to find the target with as few clicks as possible!",
-                        style = MaterialTheme.typography.bodyMedium
+                        text = "• Find the hidden target button among the 32 buttons\n\n" +
+                                "• Each wrong guess increases your click count\n\n" +
+                                "• After every 5 wrong guesses, you'll get a hint\n\n" +
+                                "• Find the target button as quickly as possible!\n\n" +
+                                "• Your score is the number of clicks it takes to find the target"
                     )
                 },
                 confirmButton = {
@@ -214,7 +218,7 @@ fun GameScreen(
     var currentHint by remember { mutableStateOf<String?>(null) }
 
     Column(modifier = Modifier.padding(16.dp)) {
-        // Header with SassySwitches logo and theme toggle - ADDED LOGO HERE
+        // Header with SassySwitches logo and theme toggle
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -227,10 +231,11 @@ fun GameScreen(
 
             if (isGameRunning && !gameOver) {
                 Text(
-                    text = "Count: $counter",
+                    text = "Clicks: $counter",
                     style = MaterialTheme.typography.headlineSmall
                 )
             }
+
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -252,9 +257,9 @@ fun GameScreen(
             onHintChange = { currentHint = it },
             onButtonClick = { isCorrect ->
                 if (isCorrect) {
-                    soundManager.playCorrectButtonSound()
+                    // soundManager.playCorrectButtonSound()
                 } else {
-                    soundManager.playButtonClickSound()
+                    // soundManager.playButtonClickSound()
                 }
             }
         )
@@ -277,6 +282,7 @@ fun FixedGrid(
     var finalScore by remember { mutableStateOf(0) }
     var incorrectClicks by remember { mutableStateOf(0) }
 
+    // Use the existing 32 buttons from Buttons.kt
     val items: List<ButtonItem> = listOf(
         button1, button2, button3, button4, button5, button6, button7, button8,
         button9, button10, button11, button12, button13, button14, button15, button16,
@@ -302,11 +308,20 @@ fun FixedGrid(
         onCounterChange(0)
         incorrectClicks = 0
         onHintChange(null)
+        // Select random target button from 1-32 (matching the existing button labels)
         targetButtonId = (1..32).random()
+    }
+
+    // Initialize game when user clicks Start Game
+    LaunchedEffect(Unit) {
+        if (!isGameRunning && targetButtonId == 0) {
+            startNewGame()
+        }
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
         if (gameOver) {
+            // Game Over Screen
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -319,18 +334,21 @@ fun FixedGrid(
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Text(
-                    text = "Ok! Ok! You found me!",
+                    text = "Congratulations!",
                     style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
                 Text(
-                    text = "Now stop pushing my buttons!",
-                    style = MaterialTheme.typography.headlineMedium,
+                    text = "You found the target button!",
+                    style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
                 Text(
-                    text = "Final Score: $finalScore",
-                    style = MaterialTheme.typography.headlineSmall,
+                    text = "Final Score: $finalScore clicks",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
                 Button(
@@ -343,14 +361,15 @@ fun FixedGrid(
                 }
             }
         } else {
-            // Game screen
+            // Active Game screen
             Box(modifier = Modifier.fillMaxWidth()) {
                 currentHint?.let { hint ->
                     Text(
                         text = "Hint: $hint",
                         style = MaterialTheme.typography.bodyLarge,
-                        fontSize = 24.sp,
-                        color = MaterialTheme.colorScheme.onSurface,
+                        fontSize = 18.sp,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(16.dp)
                     )
                 }
@@ -374,9 +393,11 @@ fun FixedGrid(
                             onButtonClick(isCorrectButton)
 
                             if (isCorrectButton) {
+                                // Found the target button!
                                 finalScore = counter + 1
                                 onGameOverChange(true)
                             } else {
+                                // Wrong button clicked
                                 incorrectClicks++
                                 updateHint()
                             }

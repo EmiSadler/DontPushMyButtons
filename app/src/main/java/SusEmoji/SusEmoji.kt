@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import com.example.dontpushmybuttons.HomeActivity
 import com.example.dontpushmybuttons.R
 import com.example.dontpushmybuttons.ui.theme.DontPushMyButtonsTheme
+import com.example.dontpushmybuttons.utils.ThemeManager
 import kotlinx.coroutines.delay
 import kotlin.math.roundToInt
 
@@ -35,10 +36,13 @@ class SusEmoji : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         setContent {
+            val context = LocalContext.current
+            val themeManager = remember { ThemeManager.getInstance(context) }
             val systemDarkTheme = isSystemInDarkTheme()
-            var isDarkTheme by rememberSaveable {
-                mutableStateOf(systemDarkTheme)
+            var isDarkTheme by remember {
+                mutableStateOf(themeManager.isDarkTheme(systemDarkTheme))
             }
 
             DontPushMyButtonsTheme(darkTheme = isDarkTheme) {
@@ -48,7 +52,10 @@ class SusEmoji : ComponentActivity() {
                 ) {
                     SusEmojiGame(
                         isDarkTheme = isDarkTheme,
-                        onThemeChange = { isDarkTheme = it }
+                        onThemeChange = { newTheme ->
+                            isDarkTheme = newTheme
+                            themeManager.setDarkTheme(newTheme)
+                        }
                     )
                 }
             }
@@ -220,7 +227,7 @@ fun GameScreen(
             "🍍" to "Spiky tropical fruit with a crown",
             "🥥" to "Hard shell fruit with white meat inside",
             "🍅" to "Red fruit often mistaken for a vegetable",
-            "🍆" to "Purple vegetable used in Mediterranean cooking",
+            "��" to "Purple vegetable used in Mediterranean cooking",
             "🥑" to "Green fruit used to make guacamole",
             "🌶️" to "Spicy red or green pod",
             "🌽" to "Yellow vegetable that pops when heated",

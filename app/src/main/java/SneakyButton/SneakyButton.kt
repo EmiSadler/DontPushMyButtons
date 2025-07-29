@@ -28,6 +28,7 @@ import androidx.compose.ui.res.painterResource
 import com.example.dontpushmybuttons.HomeActivity
 import com.example.dontpushmybuttons.R
 import com.example.dontpushmybuttons.ui.theme.DontPushMyButtonsTheme
+import com.example.dontpushmybuttons.utils.ThemeManager
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -35,10 +36,13 @@ class FinalButton : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         setContent {
+            val context = LocalContext.current
+            val themeManager = remember { ThemeManager.getInstance(context) }
             val systemDarkTheme = isSystemInDarkTheme()
-            var isDarkTheme by rememberSaveable {
-                mutableStateOf(systemDarkTheme)
+            var isDarkTheme by remember {
+                mutableStateOf(themeManager.isDarkTheme(systemDarkTheme))
             }
 
             DontPushMyButtonsTheme(darkTheme = isDarkTheme) {
@@ -46,13 +50,132 @@ class FinalButton : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    FinalButtonScreen(
+                    SneakyButtonGame(
                         isDarkTheme = isDarkTheme,
-                        onThemeChange = { isDarkTheme = it }
+                        onThemeChange = { newTheme ->
+                            isDarkTheme = newTheme
+                            themeManager.setDarkTheme(newTheme)
+                        }
                     )
                 }
             }
         }
+    }
+}
+
+@Composable
+fun SneakyButtonGame(
+    isDarkTheme: Boolean,
+    onThemeChange: (Boolean) -> Unit
+) {
+    // Landing page state
+    var isGameStarted by remember { mutableStateOf(false) }
+    var showHowToDialog by remember { mutableStateOf(false) }
+
+    if (!isGameStarted) {
+        // Landing Page
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // Header with theme switch
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = if (isDarkTheme) "Dark" else "Light",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Switch(
+                    checked = isDarkTheme,
+                    onCheckedChange = onThemeChange
+                )
+            }
+
+            Spacer(modifier = Modifier.weight(0.3f))
+
+            // Logo - using SneakyButton logo
+            AppLogo(modifier = Modifier.size(360.dp))
+
+            Button(
+                onClick = { isGameStarted = true },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                )
+            ) {
+                Text(
+                    text = "Start Game",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // How To button - CONSISTENT SIZING with other games
+            Button(
+                onClick = { showHowToDialog = true },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.secondary
+                )
+            ) {
+                Text(
+                    text = "How To Play",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            Spacer(modifier = Modifier.weight(0.2f))
+        }
+
+        // How To Dialog
+        if (showHowToDialog) {
+            AlertDialog(
+                onDismissRequest = { showHowToDialog = false },
+                title = {
+                    Text(
+                        text = "How to Play Sneaky Button",
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                text = {
+                    Text(
+                        text = "1. Click all the buttons to make them disappear\n\n" +
+                                "2. The last remaining button will move around\n\n" +
+                                "3. Catch the sneaky button to win!\n\n" +
+                                "4. Try to clear all buttons as quickly as possible\n\n" +
+                                "5. Enjoy the fireworks when you succeed!",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                },
+                confirmButton = {
+                    Button(
+                        onClick = { showHowToDialog = false }
+                    ) {
+                        Text("Got it!")
+                    }
+                }
+            )
+        }
+    } else {
+        // Game Screen
+        FinalButtonScreen(
+            isDarkTheme = isDarkTheme,
+            onThemeChange = onThemeChange
+        )
     }
 }
 

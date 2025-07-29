@@ -53,6 +53,7 @@ import androidx.compose.ui.unit.dp
 import com.example.dontpushmybuttons.HomeActivity
 import com.example.dontpushmybuttons.R
 import com.example.dontpushmybuttons.ui.theme.DontPushMyButtonsTheme
+import com.example.dontpushmybuttons.utils.ThemeManager
 import kotlinx.coroutines.delay
 
 class RoboRemember : ComponentActivity() {
@@ -60,9 +61,11 @@ class RoboRemember : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            val context = LocalContext.current
+            val themeManager = remember { ThemeManager.getInstance(context) }
             val systemDarkTheme = isSystemInDarkTheme()
-            var isDarkTheme by rememberSaveable {
-                mutableStateOf(systemDarkTheme)
+            var isDarkTheme by remember {
+                mutableStateOf(themeManager.isDarkTheme(systemDarkTheme))
             }
 
             DontPushMyButtonsTheme(darkTheme = isDarkTheme) {
@@ -72,7 +75,10 @@ class RoboRemember : ComponentActivity() {
                 ) {
                     RoboRememberGame(
                         isDarkTheme = isDarkTheme,
-                        onThemeChange = { isDarkTheme = it }
+                        onThemeChange = { newTheme ->
+                            isDarkTheme = newTheme
+                            themeManager.setDarkTheme(newTheme)
+                        }
                     )
                 }
             }
@@ -135,6 +141,8 @@ fun RoboRememberGame(
             // Logo
             AppLogo(modifier = Modifier.size(360.dp))
 
+            Spacer(modifier = Modifier.height(32.dp))
+
             // Start Game button
             Button(
                 onClick = { isGameStarted = true },
@@ -171,7 +179,7 @@ fun RoboRememberGame(
                 )
             }
 
-            Spacer(modifier = Modifier.weight(0.2f))
+            Spacer(modifier = Modifier.weight(0.7f))
         }
 
         // How To Dialog

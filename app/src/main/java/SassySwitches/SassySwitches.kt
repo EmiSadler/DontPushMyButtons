@@ -361,16 +361,20 @@ fun FixedGrid(
                 }
             }
         } else {
-            // Active Game screen
-            Box(modifier = Modifier.fillMaxWidth()) {
-                currentHint?.let { hint ->
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                if (currentHint != null) {
                     Text(
-                        text = "Hint: $hint",
+                        text = "Hint: $currentHint",
                         style = MaterialTheme.typography.bodyLarge,
-                        fontSize = 18.sp,
+                        fontSize = 16.sp,
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(16.dp)
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 2.dp)
                     )
                 }
             }

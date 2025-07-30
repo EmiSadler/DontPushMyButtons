@@ -39,7 +39,7 @@ val button2 = ButtonItem(
         addPath(createSmoothHexagonPath(size.minDimension))
     },
     color = colourGreen,
-    hint = listOf("I'm calming to look at", "six! six! six! The number of the beast!", "It's not easy being green", "Picture the inside of a cucumber, then choose the correct button and pretend you didn't need four hints")
+    hint = listOf("I'm calming to look at", "six! six! six! The number of the beast!", "Picture the inside of a cucumber, then choose the right button", "Let's pretend you didn't need four hints")
 )
 
 val button3 = ButtonItem(

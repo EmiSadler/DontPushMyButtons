@@ -29,12 +29,17 @@ import com.example.dontpushmybuttons.HomeActivity
 import com.example.dontpushmybuttons.R
 import com.example.dontpushmybuttons.ui.theme.DontPushMyButtonsTheme
 import com.example.dontpushmybuttons.utils.ThemeManager
+import utils.HapticFeedback
+import utils.SoundManager
 import kotlin.math.cos
 import kotlin.math.sin
 
 class FinalButton : ComponentActivity() {
+    private lateinit var soundManager: SoundManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        soundManager = SoundManager(this)
         enableEdgeToEdge()
 
         setContent {
@@ -55,18 +60,25 @@ class FinalButton : ComponentActivity() {
                         onThemeChange = { newTheme ->
                             isDarkTheme = newTheme
                             themeManager.setDarkTheme(newTheme)
-                        }
+                        },
+                        soundManager = soundManager
                     )
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        soundManager.release()
     }
 }
 
 @Composable
 fun SneakyButtonGame(
     isDarkTheme: Boolean,
-    onThemeChange: (Boolean) -> Unit
+    onThemeChange: (Boolean) -> Unit,
+    soundManager: SoundManager
 ) {
     // Landing page state
     var isGameStarted by remember { mutableStateOf(false) }
@@ -174,7 +186,8 @@ fun SneakyButtonGame(
         // Game Screen
         FinalButtonScreen(
             isDarkTheme = isDarkTheme,
-            onThemeChange = onThemeChange
+            onThemeChange = onThemeChange,
+            soundManager = soundManager
         )
     }
 }
@@ -182,8 +195,10 @@ fun SneakyButtonGame(
 @Composable
 fun FinalButtonScreen(
     isDarkTheme: Boolean,
-    onThemeChange: (Boolean) -> Unit
+    onThemeChange: (Boolean) -> Unit,
+    soundManager: SoundManager
 ) {
+    val context = LocalContext.current
     val gridSize = 5 * 5
     var buttons by remember { mutableStateOf(List(gridSize) { true }) }
     val remainingButtons = buttons.count { it }
@@ -295,8 +310,11 @@ fun FinalButtonScreen(
                                     index
                                 }
 
+                                val currentContext = context // Capture context in a local variable
+
                                 Button(
                                     onClick = {
+                                        HapticFeedback.performHapticFeedback(currentContext)
                                         buttons = buttons.toMutableList().also { it[buttonIndex] = false }
                                     },
                                     colors = ButtonDefaults.buttonColors(containerColor = color),

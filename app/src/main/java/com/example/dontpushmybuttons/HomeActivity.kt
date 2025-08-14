@@ -26,7 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,7 +37,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.dontpushmybuttons.ui.theme.DontPushMyButtonsTheme
-import com.example.dontpushmybuttons.utils.ThemeManager
 import SassySwitches.SassySwitches
 import SusEmoji.SusEmoji
 
@@ -46,11 +45,9 @@ class HomeActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val context = LocalContext.current
-            val themeManager = remember { ThemeManager.getInstance(context) }
             val systemDarkTheme = isSystemInDarkTheme()
-            var isDarkTheme by remember {
-                mutableStateOf(themeManager.isDarkTheme(systemDarkTheme))
+            var isDarkTheme by rememberSaveable {
+                mutableStateOf(systemDarkTheme)
             }
 
             DontPushMyButtonsTheme(darkTheme = isDarkTheme) {
@@ -60,10 +57,7 @@ class HomeActivity : ComponentActivity() {
                 ) {
                     HomeScreen(
                         isDarkTheme = isDarkTheme,
-                        onThemeChange = { newTheme ->
-                            isDarkTheme = newTheme
-                            themeManager.setDarkTheme(newTheme)
-                        }
+                        onThemeChange = { isDarkTheme = it }
                     )
                 }
             }

@@ -29,12 +29,17 @@ import com.example.dontpushmybuttons.HomeActivity
 import com.example.dontpushmybuttons.R
 import com.example.dontpushmybuttons.ui.theme.DontPushMyButtonsTheme
 import com.example.dontpushmybuttons.utils.ThemeManager
+import utils.HapticFeedback
+import utils.SoundManager
 import kotlinx.coroutines.delay
 import kotlin.math.roundToInt
 
 class SusEmoji : ComponentActivity() {
+    private lateinit var soundManager: SoundManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        soundManager = SoundManager(this)
         enableEdgeToEdge()
 
         setContent {
@@ -55,18 +60,25 @@ class SusEmoji : ComponentActivity() {
                         onThemeChange = { newTheme ->
                             isDarkTheme = newTheme
                             themeManager.setDarkTheme(newTheme)
-                        }
+                        },
+                        soundManager = soundManager
                     )
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        soundManager.release()
     }
 }
 
 @Composable
 fun SusEmojiGame(
     isDarkTheme: Boolean,
-    onThemeChange: (Boolean) -> Unit
+    onThemeChange: (Boolean) -> Unit,
+    soundManager: SoundManager
 ) {
     // Landing page state
     var isGameStarted by remember { mutableStateOf(false) }
@@ -175,7 +187,8 @@ fun SusEmojiGame(
         // Game Screen
         GameScreen(
             isDarkTheme = isDarkTheme,
-            onThemeChange = onThemeChange
+            onThemeChange = onThemeChange,
+            soundManager = soundManager
         )
     }
 }
@@ -183,7 +196,8 @@ fun SusEmojiGame(
 @Composable
 fun GameScreen(
     isDarkTheme: Boolean,
-    onThemeChange: (Boolean) -> Unit
+    onThemeChange: (Boolean) -> Unit,
+    soundManager: SoundManager
 ) {
     // Game state
     var currentClue by remember { mutableStateOf("") }
@@ -561,6 +575,8 @@ fun EmojiButton(
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
+    val context = LocalContext.current
+
     Box(
         modifier = Modifier
             .aspectRatio(1f)
@@ -572,7 +588,10 @@ fun EmojiButton(
                 },
                 shape = RoundedCornerShape(8.dp)
             )
-            .clickable { onClick() }
+            .clickable {
+                HapticFeedback.performHapticFeedback(context)
+                onClick()
+            }
             .padding(4.dp),
         contentAlignment = Alignment.Center
     ) {

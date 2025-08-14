@@ -54,11 +54,16 @@ import com.example.dontpushmybuttons.HomeActivity
 import com.example.dontpushmybuttons.R
 import com.example.dontpushmybuttons.ui.theme.DontPushMyButtonsTheme
 import com.example.dontpushmybuttons.utils.ThemeManager
+import utils.HapticFeedback
+import utils.SoundManager
 import kotlinx.coroutines.delay
 
 class RoboRemember : ComponentActivity() {
+    private lateinit var soundManager: SoundManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        soundManager = SoundManager(this)
         enableEdgeToEdge()
         setContent {
             val context = LocalContext.current
@@ -78,11 +83,17 @@ class RoboRemember : ComponentActivity() {
                         onThemeChange = { newTheme ->
                             isDarkTheme = newTheme
                             themeManager.setDarkTheme(newTheme)
-                        }
+                        },
+                        soundManager = soundManager
                     )
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        soundManager.release()
     }
 }
 
@@ -100,7 +111,8 @@ enum class ButtonColor(val normal: Color, val lit: Color) {
 @Composable
 fun RoboRememberGame(
     isDarkTheme: Boolean,
-    onThemeChange: (Boolean) -> Unit
+    onThemeChange: (Boolean) -> Unit,
+    soundManager: SoundManager
 ) {
     var gameState by remember { mutableStateOf(GameState.READY) }
     var score by remember { mutableIntStateOf(0) }
@@ -420,9 +432,9 @@ fun SimonButton(
             .clip(RoundedCornerShape(20.dp))
             .background(if (isLit) color.lit else color.normal)
             .clickable(enabled = isEnabled) {
-                // Add haptic feedback when button is pressed during input
+                // haptic feedback when button is pressed during input
                 if (isEnabled) {
-                    performHapticFeedback(context)
+                    HapticFeedback.performHapticFeedback(context)
                 }
                 onClick()
             },
@@ -451,26 +463,6 @@ fun AppLogo(modifier: Modifier = Modifier) {
                 context.startActivity(intent)
             }
     )
-}
-
-// Helper function to perform haptic feedback
-fun performHapticFeedback(context: Context) {
-    val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        val vibratorManager = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
-        vibratorManager.defaultVibrator
-    } else {
-        @Suppress("DEPRECATION")
-        context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-    }
-
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        // Modern haptic feedback with more control (50ms vibration)
-        vibrator.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE))
-    } else {
-        // Legacy vibration for older devices
-        @Suppress("DEPRECATION")
-        vibrator.vibrate(50)
-    }
 }
 
 fun handleButtonClick(

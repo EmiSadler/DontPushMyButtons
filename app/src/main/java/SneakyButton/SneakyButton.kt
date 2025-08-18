@@ -94,22 +94,6 @@ fun SneakyButtonGame(
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Header with theme switch
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = if (isDarkTheme) "Dark" else "Light",
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Switch(
-                    checked = isDarkTheme,
-                    onCheckedChange = onThemeChange
-                )
-            }
 
             Spacer(modifier = Modifier.weight(0.3f))
 
@@ -122,7 +106,7 @@ fun SneakyButtonGame(
                     .fillMaxWidth()
                     .height(56.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary
+                    containerColor = MaterialTheme.colorScheme.tertiary
                 )
             ) {
                 Text(
@@ -141,7 +125,7 @@ fun SneakyButtonGame(
                     .fillMaxWidth()
                     .height(56.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.secondary
+                    containerColor = MaterialTheme.colorScheme.tertiary
                 )
             ) {
                 Text(
@@ -330,31 +314,17 @@ fun FinalButtonScreen(
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            // Header with theme switch and logo (matching SassySwitches pattern)
+            // Header with logo only (no theme toggle)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 AppLogo(
                     modifier = Modifier.size(120.dp)
                 )
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = if (isDarkTheme) "Dark" else "Light",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Switch(
-                        checked = isDarkTheme,
-                        onCheckedChange = onThemeChange
-                    )
-                }
             }
 
             // Game content

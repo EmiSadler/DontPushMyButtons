@@ -110,23 +110,6 @@ fun SassySwitchesGame(
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Header with theme switch
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = if (isDarkTheme) "Dark" else "Light",
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Switch(
-                    checked = isDarkTheme,
-                    onCheckedChange = onThemeChange
-                )
-            }
-
             Spacer(modifier = Modifier.weight(0.3f))
 
             AppLogo(modifier = Modifier.size(360.dp))
@@ -139,7 +122,7 @@ fun SassySwitchesGame(
                     .fillMaxWidth()
                     .height(56.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary
+                    containerColor = MaterialTheme.colorScheme.tertiary
                 )
             ) {
                 Text(
@@ -157,7 +140,7 @@ fun SassySwitchesGame(
                     .fillMaxWidth()
                     .height(56.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.secondary
+                    containerColor = MaterialTheme.colorScheme.tertiary
                 )
             ) {
                 Text(
@@ -299,7 +282,7 @@ fun GameScreen(
     var currentHint by remember { mutableStateOf<String?>(null) }
 
     Column(modifier = Modifier.padding(16.dp)) {
-        // Header with SassySwitches logo and theme toggle
+        // Header with SassySwitches logo only (no theme toggle)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -314,15 +297,6 @@ fun GameScreen(
                 Text(
                     text = "Clicks: $counter",
                     style = MaterialTheme.typography.headlineSmall
-                )
-            }
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Switch(
-                    checked = isDarkTheme,
-                    onCheckedChange = onThemeChange
                 )
             }
         }

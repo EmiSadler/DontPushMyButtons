@@ -94,23 +94,6 @@ fun SusEmojiGame(
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Header with theme switch
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = if (isDarkTheme) "Dark" else "Light",
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Switch(
-                    checked = isDarkTheme,
-                    onCheckedChange = onThemeChange
-                )
-            }
-
             Spacer(modifier = Modifier.weight(0.3f))
 
             // Logo
@@ -123,7 +106,7 @@ fun SusEmojiGame(
                     .fillMaxWidth()
                     .height(56.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary
+                    containerColor = MaterialTheme.colorScheme.tertiary
                 )
             ) {
                 Text(
@@ -142,7 +125,7 @@ fun SusEmojiGame(
                     .fillMaxWidth()
                     .height(56.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.secondary
+                    containerColor = MaterialTheme.colorScheme.tertiary
                 )
             ) {
                 Text(
@@ -477,7 +460,7 @@ fun GameScreen(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        // Header with logo, toggle, timer, and score
+        // Header with logo, timer, and score (no theme toggle)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -488,26 +471,10 @@ fun GameScreen(
             // Logo on the left
             AppLogo(modifier = Modifier.size(120.dp))
 
-            // Vertically stacked: Dark/Light toggle, Time, and Score
+            // Time and Score on the right
             Column(
                 horizontalAlignment = Alignment.End
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = if (isDarkTheme) "Dark" else "Light",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Switch(
-                        checked = isDarkTheme,
-                        onCheckedChange = onThemeChange
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(8.dp))
-
                 Text(
                     text = "Time: ${(60 - elapsedTime).roundToInt()}s",
                     style = MaterialTheme.typography.titleMedium,

@@ -36,6 +36,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import com.example.dontpushmybuttons.utils.ThemeManager
+import com.example.dontpushmybuttons.utils.HighScoreManager
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,6 +50,7 @@ import androidx.compose.ui.unit.sp
 import com.example.dontpushmybuttons.HomeActivity
 import com.example.dontpushmybuttons.R
 import com.example.dontpushmybuttons.ui.theme.DontPushMyButtonsTheme
+import utils.SoundManager
 
 class SassySwitches : ComponentActivity() {
     private lateinit var soundManager: SoundManager
@@ -98,6 +100,7 @@ fun SassySwitchesGame(
     // Landing page state
     var isGameStarted by remember { mutableStateOf(false) }
     var showHowToDialog by remember { mutableStateOf(false) }
+    var showHighScoresDialog by remember { mutableStateOf(false) }
 
     if (!isGameStarted) {
         // Landing Page
@@ -164,6 +167,25 @@ fun SassySwitchesGame(
                 )
             }
 
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // High Scores button
+            Button(
+                onClick = { showHighScoresDialog = true },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.tertiary
+                )
+            ) {
+                Text(
+                    text = "High Scores",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
             Spacer(modifier = Modifier.weight(0.2f))
         }
 
@@ -192,6 +214,65 @@ fun SassySwitchesGame(
                         onClick = { showHowToDialog = false }
                     ) {
                         Text("Got it!")
+                    }
+                }
+            )
+        }
+
+        // High Scores Dialog
+        if (showHighScoresDialog) {
+            val context = LocalContext.current
+            val highScoreManager = remember { HighScoreManager.getInstance(context) }
+
+            AlertDialog(
+                onDismissRequest = { showHighScoresDialog = false },
+                title = {
+                    Text(
+                        text = "🏆 High Scores",
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                text = {
+                    Column {
+                        Text(
+                            text = "SassySwitches",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+
+                        if (highScoreManager.hasSassySwitchesScore()) {
+                            Text(
+                                text = "Best Score: ${highScoreManager.getSassySwitchesHighScore()} clicks",
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            Text(
+                                text = "Lower scores are better!",
+                                style = MaterialTheme.typography.bodySmall,
+                                modifier = Modifier.padding(top = 4.dp)
+                            )
+                        } else {
+                            Text(
+                                text = "No games played yet!",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Text(
+                                text = "Play a game to set your first high score.",
+                                style = MaterialTheme.typography.bodySmall,
+                                modifier = Modifier.padding(top = 4.dp)
+                            )
+                        }
+                    }
+                },
+                confirmButton = {
+                    Button(
+                        onClick = { showHighScoresDialog = false }
+                    ) {
+                        Text("Close")
                     }
                 }
             )
@@ -321,7 +402,17 @@ fun FixedGrid(
 
     Column(modifier = Modifier.fillMaxSize()) {
         if (gameOver) {
-            // Game Over Screen
+            // Game Over Screen with high score saving
+            val context = LocalContext.current
+            val highScoreManager = remember { HighScoreManager.getInstance(context) }
+
+            // Save high score when game over state is reached
+            LaunchedEffect(finalScore) {
+                if (finalScore > 0) {
+                    highScoreManager.setSassySwitchesHighScore(finalScore)
+                }
+            }
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -349,8 +440,27 @@ fun FixedGrid(
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.padding(bottom = 16.dp)
+                    modifier = Modifier.padding(bottom = 8.dp)
                 )
+
+                // Show if this is a new high score
+                val currentBest = highScoreManager.getSassySwitchesHighScore()
+                if (finalScore <= currentBest || !highScoreManager.hasSassySwitchesScore()) {
+                    Text(
+                        text = "🎉 New High Score! 🎉",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.secondary,
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+                } else {
+                    Text(
+                        text = "Best: ${currentBest} clicks",
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+                }
+
                 Button(
                     onClick = { startNewGame() },
                     modifier = Modifier

@@ -29,6 +29,7 @@ import com.example.dontpushmybuttons.HomeActivity
 import com.example.dontpushmybuttons.R
 import com.example.dontpushmybuttons.ui.theme.DontPushMyButtonsTheme
 import com.example.dontpushmybuttons.utils.ThemeManager
+import com.example.dontpushmybuttons.utils.HighScoreManager
 import utils.HapticFeedback
 import utils.SoundManager
 import kotlinx.coroutines.delay
@@ -83,6 +84,7 @@ fun SusEmojiGame(
     // Landing page state
     var isGameStarted by remember { mutableStateOf(false) }
     var showHowToDialog by remember { mutableStateOf(false) }
+    var showHighScoresDialog by remember { mutableStateOf(false) }
 
     if (!isGameStarted) {
         // Landing Page
@@ -150,6 +152,25 @@ fun SusEmojiGame(
                 )
             }
 
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // High Scores button
+            Button(
+                onClick = { showHighScoresDialog = true },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.tertiary
+                )
+            ) {
+                Text(
+                    text = "High Scores",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
             Spacer(modifier = Modifier.weight(0.2f))
         }
 
@@ -179,6 +200,66 @@ fun SusEmojiGame(
                         onClick = { showHowToDialog = false }
                     ) {
                         Text("Got it!")
+                    }
+                }
+            )
+        }
+
+        // High Scores Dialog
+        if (showHighScoresDialog) {
+            val context = LocalContext.current
+            val highScoreManager = remember { HighScoreManager.getInstance(context) }
+
+            AlertDialog(
+                onDismissRequest = { showHighScoresDialog = false },
+                title = {
+                    Text(
+                        text = "🏆 High Scores",
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                text = {
+                    Column {
+                        Text(
+                            text = "Sus Emoji",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+
+                        val highScore = highScoreManager.getSusEmojiHighScore()
+                        if (highScore > 0) {
+                            Text(
+                                text = "Best Score: $highScore emojis",
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            Text(
+                                text = "Higher scores are better!",
+                                style = MaterialTheme.typography.bodySmall,
+                                modifier = Modifier.padding(top = 4.dp)
+                            )
+                        } else {
+                            Text(
+                                text = "No games played yet!",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Text(
+                                text = "Play a game to set your first high score.",
+                                style = MaterialTheme.typography.bodySmall,
+                                modifier = Modifier.padding(top = 4.dp)
+                            )
+                        }
+                    }
+                },
+                confirmButton = {
+                    Button(
+                        onClick = { showHighScoresDialog = false }
+                    ) {
+                        Text("Close")
                     }
                 }
             )
@@ -396,17 +477,16 @@ fun GameScreen(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        // Header with logo and theme toggle + score/time
+        // Header with logo, toggle, timer, and score
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(horizontal = 16.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.Top
         ) {
-            AppLogo(
-                modifier = Modifier.size(120.dp)
-            )
+            // Logo on the left
+            AppLogo(modifier = Modifier.size(120.dp))
 
             // Vertically stacked: Dark/Light toggle, Time, and Score
             Column(
@@ -426,7 +506,7 @@ fun GameScreen(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
                     text = "Time: ${(60 - elapsedTime).roundToInt()}s",
@@ -518,6 +598,16 @@ fun GameScreen(
 
         // Game Over Dialog
         if (isGameOver) {
+            // Save high score when game ends
+            val context = LocalContext.current
+            val highScoreManager = remember { HighScoreManager.getInstance(context) }
+
+            LaunchedEffect(score) {
+                if (score > 0) {
+                    highScoreManager.setSusEmojiHighScore(score)
+                }
+            }
+
             AlertDialog(
                 onDismissRequest = { },
                 title = {
@@ -538,6 +628,25 @@ fun GameScreen(
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.primary
                         )
+
+                        // Show if this is a new high score
+                        val currentBest = highScoreManager.getSusEmojiHighScore()
+                        if (score >= currentBest || currentBest == 0) {
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = "🎉 New High Score! 🎉",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.secondary
+                            )
+                        } else {
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = "Best: $currentBest emojis",
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        }
+
                         Spacer(modifier = Modifier.height(8.dp))
                         val averageTime = if (score > 0) (60f / score).roundToInt() else 0
                         Text("Average time per emoji: ${averageTime}s")

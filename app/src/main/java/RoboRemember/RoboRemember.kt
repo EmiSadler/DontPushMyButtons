@@ -54,6 +54,7 @@ import com.example.dontpushmybuttons.HomeActivity
 import com.example.dontpushmybuttons.R
 import com.example.dontpushmybuttons.ui.theme.DontPushMyButtonsTheme
 import com.example.dontpushmybuttons.utils.ThemeManager
+import com.example.dontpushmybuttons.utils.HighScoreManager
 import utils.HapticFeedback
 import utils.SoundManager
 import kotlinx.coroutines.delay
@@ -122,6 +123,7 @@ fun RoboRememberGame(
     var showingIndex by remember { mutableIntStateOf(0) }
     var isGameStarted by remember { mutableStateOf(false) }
     var showHowToDialog by remember { mutableStateOf(false) }
+    var showHighScoresDialog by remember { mutableStateOf(false) }
 
     if (!isGameStarted) {
 // Landing Page
@@ -191,6 +193,25 @@ fun RoboRememberGame(
                 )
             }
 
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // High Scores button
+            Button(
+                onClick = { showHighScoresDialog = true },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.tertiary
+                )
+            ) {
+                Text(
+                    text = "High Scores",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
             Spacer(modifier = Modifier.weight(0.7f))
         }
 
@@ -220,6 +241,66 @@ fun RoboRememberGame(
                         onClick = { showHowToDialog = false }
                     ) {
                         Text("Got it!")
+                    }
+                }
+            )
+        }
+
+        // High Scores Dialog
+        if (showHighScoresDialog) {
+            val context = LocalContext.current
+            val highScoreManager = remember { HighScoreManager.getInstance(context) }
+
+            AlertDialog(
+                onDismissRequest = { showHighScoresDialog = false },
+                title = {
+                    Text(
+                        text = "🏆 High Scores",
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                text = {
+                    Column {
+                        Text(
+                            text = "RoboRemember",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+
+                        val highScore = highScoreManager.getRoboRememberHighScore()
+                        if (highScore > 0) {
+                            Text(
+                                text = "Best Score: $highScore rounds",
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            Text(
+                                text = "Higher scores are better!",
+                                style = MaterialTheme.typography.bodySmall,
+                                modifier = Modifier.padding(top = 4.dp)
+                            )
+                        } else {
+                            Text(
+                                text = "No games played yet!",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Text(
+                                text = "Play a game to set your first high score.",
+                                style = MaterialTheme.typography.bodySmall,
+                                modifier = Modifier.padding(top = 4.dp)
+                            )
+                        }
+                    }
+                },
+                confirmButton = {
+                    Button(
+                        onClick = { showHighScoresDialog = false }
+                    ) {
+                        Text("Close")
                     }
                 }
             )
@@ -413,6 +494,15 @@ fun RoboRememberGame(
                 }
             }
         }
+
+        // Save high score when game ends
+        val context = LocalContext.current
+        LaunchedEffect(gameState, score) {
+            if (gameState == GameState.GAME_OVER && score > 0) {
+                val highScoreManager = HighScoreManager.getInstance(context)
+                highScoreManager.setRoboRememberHighScore(score)
+            }
+        }
     }
 }
 
@@ -479,7 +569,7 @@ fun handleButtonClick(
 
     // Check if this button is correct
     if (buttonId != currentSequence[playerInput.size]) {
-        // Wrong button - game over
+        // Wrong button - game over, save high score
         onStateChange(GameState.GAME_OVER, emptyList(), score, currentSequence)
         return
     }

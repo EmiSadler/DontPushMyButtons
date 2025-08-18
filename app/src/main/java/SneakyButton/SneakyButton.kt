@@ -29,6 +29,7 @@ import com.example.dontpushmybuttons.HomeActivity
 import com.example.dontpushmybuttons.R
 import com.example.dontpushmybuttons.ui.theme.DontPushMyButtonsTheme
 import com.example.dontpushmybuttons.utils.ThemeManager
+import com.example.dontpushmybuttons.utils.HighScoreManager
 import utils.HapticFeedback
 import utils.SoundManager
 import kotlin.math.cos
@@ -83,6 +84,7 @@ fun SneakyButtonGame(
     // Landing page state
     var isGameStarted by remember { mutableStateOf(false) }
     var showHowToDialog by remember { mutableStateOf(false) }
+    var showHighScoresDialog by remember { mutableStateOf(false) }
 
     if (!isGameStarted) {
         // Landing Page
@@ -149,6 +151,25 @@ fun SneakyButtonGame(
                 )
             }
 
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // High Scores button
+            Button(
+                onClick = { showHighScoresDialog = true },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.tertiary
+                )
+            ) {
+                Text(
+                    text = "High Scores",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
             Spacer(modifier = Modifier.weight(0.2f))
         }
 
@@ -178,6 +199,66 @@ fun SneakyButtonGame(
                         onClick = { showHowToDialog = false }
                     ) {
                         Text("Got it!")
+                    }
+                }
+            )
+        }
+
+        // High Scores Dialog
+        if (showHighScoresDialog) {
+            val context = LocalContext.current
+            val highScoreManager = remember { HighScoreManager.getInstance(context) }
+
+            AlertDialog(
+                onDismissRequest = { showHighScoresDialog = false },
+                title = {
+                    Text(
+                        text = "🏆 High Scores",
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                text = {
+                    Column {
+                        Text(
+                            text = "Sneaky Button",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+
+                        val highScore = highScoreManager.getSneakyButtonHighScore()
+                        if (highScore > 0) {
+                            Text(
+                                text = "Best Score: $highScore points",
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            Text(
+                                text = "Higher scores are better!",
+                                style = MaterialTheme.typography.bodySmall,
+                                modifier = Modifier.padding(top = 4.dp)
+                            )
+                        } else {
+                            Text(
+                                text = "No games played yet!",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Text(
+                                text = "Play a game to set your first high score.",
+                                style = MaterialTheme.typography.bodySmall,
+                                modifier = Modifier.padding(top = 4.dp)
+                            )
+                        }
+                    }
+                },
+                confirmButton = {
+                    Button(
+                        onClick = { showHighScoresDialog = false }
+                    ) {
+                        Text("Close")
                     }
                 }
             )

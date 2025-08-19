@@ -269,6 +269,32 @@ fun FinalButtonScreen(
     val remainingButtons = buttons.count { it }
     var showSuccess by remember { mutableStateOf(false) }
 
+    // Timer state
+    var startTime by remember { mutableStateOf(0L) }
+    var currentTime by remember { mutableStateOf(0L) }
+    var gameCompleted by remember { mutableStateOf(false) }
+    var finalTime by remember { mutableStateOf(0f) }
+
+    // Initialize start time when game begins
+    LaunchedEffect(Unit) {
+        startTime = System.currentTimeMillis()
+    }
+
+    // Update current time every 100ms
+    LaunchedEffect(startTime, gameCompleted) {
+        if (!gameCompleted) {
+            while (!gameCompleted) {
+                currentTime = System.currentTimeMillis()
+                kotlinx.coroutines.delay(100)
+            }
+        }
+    }
+
+    // Calculate elapsed time in seconds
+    val elapsedTime = if (startTime > 0) {
+        (currentTime - startTime) / 1000f
+    } else 0f
+
     // Random position for the last button
     var randomRow by remember { mutableStateOf(0) }
     var randomCol by remember { mutableStateOf(0) }
@@ -276,14 +302,26 @@ fun FinalButtonScreen(
     // Trigger position change when there's only one button left
     LaunchedEffect(remainingButtons) {
         if (remainingButtons == 1) {
-            while (buttons.count { it } == 1) {
+            while (buttons.count { it } == 1 && !gameCompleted) {
                 kotlinx.coroutines.delay(800)
                 randomRow = (0..4).random()
                 randomCol = (0..4).random()
             }
         }
-        if (remainingButtons == 0) {
+        if (remainingButtons == 0 && !gameCompleted) {
+            gameCompleted = true
+            finalTime = elapsedTime
             showSuccess = true
+
+            // Save high score (convert time to integer seconds for storage)
+            val highScoreManager = HighScoreManager.getInstance(context)
+            val timeInSeconds = finalTime.toInt()
+            val currentHighScore = highScoreManager.getSneakyButtonHighScore()
+
+            // Save if no previous score or new time is better (lower)
+            if (currentHighScore == 0 || timeInSeconds < currentHighScore) {
+                highScoreManager.setSneakyButtonHighScore(timeInSeconds)
+            }
         }
     }
 
@@ -314,17 +352,33 @@ fun FinalButtonScreen(
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            // Header with logo only (no theme toggle)
+            // Header with logo and timer
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                horizontalArrangement = Arrangement.Start,
+                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 AppLogo(
                     modifier = Modifier.size(120.dp)
                 )
+
+                // Timer display
+                Card(
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer
+                    ),
+                    modifier = Modifier.padding(8.dp)
+                ) {
+                    Text(
+                        text = "Time: ${"%.1f".format(java.util.Locale.US, elapsedTime)}s",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                    )
+                }
             }
 
             // Game content
@@ -365,8 +419,16 @@ fun FinalButtonScreen(
 
                                 Button(
                                     onClick = {
-                                        HapticFeedback.performHapticFeedback(currentContext)
-                                        buttons = buttons.toMutableList().also { it[buttonIndex] = false }
+                                        if (!gameCompleted) {
+                                            HapticFeedback.performHapticFeedback(currentContext)
+                                            // Fix: Always use the correct button index for removal
+                                            val indexToRemove = if (remainingButtons == 1) {
+                                                buttons.indexOfFirst { it }
+                                            } else {
+                                                index
+                                            }
+                                            buttons = buttons.toMutableList().also { it[indexToRemove] = false }
+                                        }
                                     },
                                     colors = ButtonDefaults.buttonColors(containerColor = color),
                                     shape = shape,
@@ -391,7 +453,24 @@ fun FinalButtonScreen(
 
         // Success overlay
         if (showSuccess) {
-            SuccessOverlay()
+            SuccessOverlay(
+                finalTime = finalTime,
+                onPlayAgain = {
+                    // Reset game state for new game
+                    buttons = List(gridSize) { true }
+                    showSuccess = false
+                    gameCompleted = false
+                    startTime = System.currentTimeMillis()
+                    currentTime = startTime
+                    finalTime = 0f
+                },
+                onMainMenu = {
+                    // Return to main menu
+                    val intent = Intent(context, HomeActivity::class.java)
+                    context.startActivity(intent)
+                    (context as? ComponentActivity)?.finish()
+                }
+            )
         }
     }
 }
@@ -412,7 +491,11 @@ fun AppLogo(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun SuccessOverlay() {
+fun SuccessOverlay(
+    finalTime: Float,
+    onPlayAgain: () -> Unit,
+    onMainMenu: () -> Unit
+) {
     val context = LocalContext.current
     val infiniteTransition = rememberInfiniteTransition(label = "fireworks")
 
@@ -469,10 +552,54 @@ fun SuccessOverlay() {
                     color = Color.White
                 )
                 Text(
+                    text = "Time: ${"%.1f".format(java.util.Locale.US, finalTime)} seconds",
+                    fontSize = 20.sp,
+                    color = Color.White.copy(alpha = 0.8f),
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+                Text(
                     text = "Tap to return home",
                     fontSize = 16.sp,
                     color = Color.White.copy(alpha = 0.8f),
                     modifier = Modifier.padding(top = 8.dp)
+                )
+            }
+        }
+
+        // Play Again and Main Menu buttons
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(32.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Button(
+                onClick = onPlayAgain,
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF4CAF50)
+                )
+            ) {
+                Text(
+                    text = "Play Again",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+            }
+
+            Button(
+                onClick = onMainMenu,
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF2196F3)
+                )
+            ) {
+                Text(
+                    text = "Main Menu",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
                 )
             }
         }

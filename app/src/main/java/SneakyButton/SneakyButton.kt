@@ -220,7 +220,7 @@ fun SneakyButtonGame(
                                 fontWeight = FontWeight.SemiBold
                             )
                             Text(
-                                text = "Higher scores are better!",
+                                text = "Lower scores are better!",
                                 style = MaterialTheme.typography.bodySmall,
                                 modifier = Modifier.padding(top = 4.dp)
                             )

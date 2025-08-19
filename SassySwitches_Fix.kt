@@ -48,7 +48,6 @@ fun FixedGrid(
         targetButtonId = (1..32).random() // This will now properly select a target button
     }
 
-    // FIXED: Initialize the game when first loaded
     LaunchedEffect(Unit) {
         if (!isGameRunning && !gameOver && targetButtonId == 0) {
             startNewGame()
